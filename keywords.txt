@@ -1,0 +1,13 @@
+##################################################
+# Mapa de colorização sintática para ModulosGSM
+##################################################
+
+# Tipos de Dados (KEYWORD1)
+	ModulosGSM	KEYWORD1
+
+# Métodos e Funções (KEYWORD2)
+	respostaGSM			KEYWORD2
+	testeConexaoGSM		KEYWORD2
+	infoGSM				KEYWORD2
+	ligarGSM			KEYWORD2
+	setupGSM			KEYWORD2
