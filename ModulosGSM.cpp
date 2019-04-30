@@ -24,15 +24,25 @@ String ModulosGSM::respostaGSM(){        // Stream é uma classe abstrata, pai d
   return retorno;
 }
 
-String ModulosGSM::testeConexaoGSM(){
+bool ModulosGSM::testeConexaoGSM(){
   String retorno = "";
+  bool estadoConexao = "";
   
   moduloGSM->print("AT\n");                        // Envia o comando AT de teste
 
   if(moduloGSM->available()>0){
     retorno = respostaGSM();
   }
-  return retorno;
+
+//  return retorno;
+
+  if(retorno == "AT\nOK\n\n"){
+    estadoConexao = true;
+  } else {
+    estadoConexao = false;
+  }
+
+  return estadoConexao;
 }
 
 String ModulosGSM::infoGSM(){                      // Retorna Informações do GSM

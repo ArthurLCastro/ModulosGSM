@@ -12,7 +12,7 @@ class ModulosGSM{
 		ModulosGSM(Stream&);
 		void setupGSM(Stream&);
 		String respostaGSM();
-		String testeConexaoGSM();
+		bool testeConexaoGSM();
 		String infoGSM();
 		String ligarGSM(String);
 };

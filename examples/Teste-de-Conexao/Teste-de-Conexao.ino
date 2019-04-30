@@ -33,7 +33,7 @@ ModulosGSM meuGSM1;
 SoftwareSerial serialGSM1(RX_GSM1, TX_GSM1);
 
 // DECLARAÇÕES DE VARIÁVEIS GLOBAIS:
-String teste = "";
+bool teste;
 
 void setup(){
   Serial.begin(9600);                       // Inicia a comunicação Serial a uma taxa de transmissão de 9600
@@ -42,7 +42,14 @@ void setup(){
 }
 
 void loop(){
-  teste = meuGSM1.testeConexaoGSM();		// Retorna uma String com "AT OK" por enquanto
+  teste = meuGSM1.testeConexaoGSM();    // Retorna um valor booleano, 1 para conexao ok ou 0 para módulo desconectado
   Serial.println(teste);
+  
+  if(teste == 1){
+    Serial.println("Conexao Estabelecida");
+  } else if(teste == 0){
+    Serial.println("Modulo Desconectado");  
+  }
+  
   delay(500);
 }
