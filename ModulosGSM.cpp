@@ -34,9 +34,7 @@ bool ModulosGSM::testeConexaoGSM(){
     retorno = respostaGSM();
   }
 
-//  return retorno;
-
-  if(retorno == "AT\nOK\n\n"){
+  if(retorno == "AT\r\nOK\r\n"){
     estadoConexao = true;
   } else {
     estadoConexao = false;
