@@ -11,7 +11,7 @@ void ModulosGSM::setupGSM(Stream& canalDados){
   this->moduloGSM = &canalDados;  
 }
 
-String ModulosGSM::respostaGSM(){        // Stream é uma classe abstrata, pai de HardwareSerial e de SoftwareSerial
+String ModulosGSM::respostaGSM(){                  // Stream é uma classe abstrata, pai de HardwareSerial e de SoftwareSerial
   String retorno = "";
 
   if(moduloGSM->available()>0){
@@ -43,15 +43,15 @@ bool ModulosGSM::testeConexaoGSM(){
   return estadoConexao;
 }
 
-String ModulosGSM::infoGSM(){                      // Retorna Informações do GSM
+String ModulosGSM::infoGSM(){                        // Retorna Informações do GSM
   String retorno = "";
 
-  moduloGSM->print("ATI\n");                        // Envia o comando AT solicitando informações do GSM
+  moduloGSM->print("ATI\n");                         // Envia o comando AT solicitando informações do GSM
   retorno = respostaGSM();
   return retorno;
 }
 
-String ModulosGSM::ligarGSM(String telefone){       // Faz ligação para outro aparelho
+String ModulosGSM::ligarGSM(String telefone){        // Faz ligação para outro aparelho
   String retorno = "";
 
   moduloGSM->print("ATH\n");                         // Envia o comando AT para desligar uma ligação em andamento
