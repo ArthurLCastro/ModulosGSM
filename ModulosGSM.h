@@ -15,6 +15,8 @@ class ModulosGSM{
 		bool testeConexaoGSM();
 		String infoGSM();
 		String ligarGSM(String);
+//		String getGSM(String , String);
+		bool getGSM();
 };
 
 #endif

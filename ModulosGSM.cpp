@@ -64,3 +64,61 @@ String ModulosGSM::ligarGSM(String telefone){        // Faz ligação para outro
 
   return retorno;
 }
+
+//bool ModulosGSM::getGSM(String URL, String dados){
+bool ModulosGSM::getGSM(){
+  //String retorno = "";
+  bool estadoConexao = "";
+  int tempo = 1000;
+
+  moduloGSM->print("AT+SAPBR=3,1,\"Contype\",\"GPRS\"");
+  if(moduloGSM->available()>0){
+    Serial.print(respostaGSM());
+  }
+  delay(tempo);
+  moduloGSM->print("AT+SAPBR=3,1,\"APN\",\"www\"\n");
+  if(moduloGSM->available()>0){
+    Serial.print(respostaGSM());
+  }
+  delay(tempo);
+  moduloGSM->print("AT+SAPBR=1,1\n");
+  if(moduloGSM->available()>0){
+    Serial.print(respostaGSM());
+  }
+  delay(tempo);
+  moduloGSM->print("AT+SAPBR=2,1\n");
+  if(moduloGSM->available()>0){
+    Serial.print(respostaGSM());
+  }
+  delay(tempo);
+  moduloGSM->print("AT+HTTPINIT\n");
+  if(moduloGSM->available()>0){
+    Serial.print(respostaGSM());
+  }
+  delay(tempo);
+  moduloGSM->print("AT+HTTPSSL=1\n");
+  if(moduloGSM->available()>0){
+    Serial.print(respostaGSM());
+  }
+  delay(tempo);
+  moduloGSM->print("AT+HTTPPARA=\"CID\",1\n");
+  if(moduloGSM->available()>0){
+    Serial.print(respostaGSM());
+  }
+  delay(tempo);
+  moduloGSM->print("AT+HTTPPARA=\"URL\",\"https://castroarthurelectronics.000webhostapp.com/get/add.php?temp=28&umid=25&lum=70\"\n");
+  if(moduloGSM->available()>0){
+    Serial.print(respostaGSM());
+  }
+  delay(tempo);
+  moduloGSM->print("AT+HTTPACTION=0\n");
+  if(moduloGSM->available()>0){
+    Serial.print(respostaGSM());
+  }
+  delay(tempo);
+//  moduloGSM->print("AT+HTTPREAD\n");
+//  delay(5);
+
+  estadoConexao = true;
+  return estadoConexao;
+}

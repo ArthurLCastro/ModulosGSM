@@ -11,3 +11,4 @@
 	infoGSM				KEYWORD2
 	ligarGSM			KEYWORD2
 	setupGSM			KEYWORD2
+	getGSM				KEYWORD2
