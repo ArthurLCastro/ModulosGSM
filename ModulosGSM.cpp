@@ -65,21 +65,22 @@ String ModulosGSM::ligarGSM(String telefone){        // Faz ligação para outro
   return retorno;
 }
 
-bool ModulosGSM::TestgetGSM(String urlDados){
+bool ModulosGSM::httpWriteGET(String urlDados){
   bool estadoEnvio = false;
 
   estadoEnvio = comando("AT+SAPBR=3,1,\"Contype\",\"GPRS\"\n", "AT+SAPBR=3,1,\"Contype\",\"GPRS\"\r\nOK\r\n");
   delay(50);
   if(estadoEnvio == false){
-    return estadoEnvio;
-    break;
+    return;
   }
-  estadoEnvio = comando("AT+SAPBR=3,1,\"APN\",\"www\"\n", ""); // Adicionar respEsperada
+  estadoEnvio = comando("AT+SAPBR=3,1,\"APN\",\"www\"\n", "AT+SAPBR=3,1,\"APN\",\"www\"\r\nOK\r\n");
   delay(50);
   if(estadoEnvio == false){
-    return estadoEnvio;
-    break;
+    return;
   }
+
+  return estadoEnvio;         //Comando só será executado se o estadoEnvio for true
+/*
   estadoEnvio = comando("AT+SAPBR=1,1\n", ""); // Adicionar respEsperada
   delay(50);
   if(estadoEnvio == false){
@@ -125,6 +126,8 @@ bool ModulosGSM::TestgetGSM(String urlDados){
 
   return estadoEnvio; 
 
+*/
+
 /*
 //Avaliar o RISCO do módulo travar no While caso não haja conexão com o módulo
   while (estadoEnvio != true){
@@ -141,6 +144,30 @@ bool ModulosGSM::TestgetGSM(String urlDados){
 */
 }
 
+String ModulosGSM::httpReadGET(String urlDados){
+  bool estadoEnvio;
+  String retorno = "", pagina = "";
+
+  estadoEnvio = httpWriteGET(urlDados);
+
+  if(estadoEnvio == true){
+    moduloGSM->print("AT+HTTPREAD\n");
+      if(moduloGSM->available()>0){
+        pagina = respostaGSM();
+        if(pagina != "AT+HTTPREAD\r\nERROR\r\n"){
+          retorno = pagina;
+        } else {
+          retorno = "[DEBUG] Erro na leitura da Pagina";
+        }
+      }
+    delay(50);
+  } else {
+    retorno = "[DEBUG] Erro ao executar GET";
+  }
+  return retorno;
+}
+
+
 bool ModulosGSM::comando(String comandoAT, String respEsperada){
   static unsigned int tentativas = 5;
   bool comandOk = false, retorno = false;
@@ -152,19 +179,21 @@ bool ModulosGSM::comando(String comandoAT, String respEsperada){
       if(moduloGSM->available()>0){
         if(respostaGSM() == respEsperada){
           comandOk = true;
-          retorno = true;
+          return retorno = true;
         } else {
           comandOk = false;
         }
       }
     } else {
-      retorno = true;
-      break;
+      return retorno = true;
     }
     delay(100);
   }
+
+  return retorno;
 }
 
+/*
 bool ModulosGSM::getGSM(String urlDados){
   bool estadoConexao = false;
 
@@ -227,9 +256,9 @@ bool ModulosGSM::getGSM(String urlDados){
   estadoConexao = true;
   return estadoConexao;
 }
+*/
 
 /*
-
 bool ModulosGSM::getGSM(){
   //String retorno = "";
   bool estadoConexao = "";

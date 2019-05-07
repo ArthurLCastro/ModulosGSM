@@ -10,7 +10,7 @@ ModulosGSM meuGSM1;
 SoftwareSerial serialGSM1(RX_GSM1, TX_GSM1);
 
 // DECLARAÇÕES DE VARIÁVEIS GLOBAIS:
-  String url = "", envio = "";
+  String url = "", pacote = "";
   String sensor1, sensor2, sensor3;
   bool estadoEnvio;
 
@@ -26,9 +26,9 @@ void loop(){
   sensor3 = "lum=" + String(lerLuminosidade());
 
   url = "https://castroarthurelectronics.000webhostapp.com/get/add.php";
-  envio = url + "?" + sensor1 + "&" + sensor2 + "&" + sensor3;
+  pacote = url + "?" + sensor1 + "&" + sensor2 + "&" + sensor3;
 
-  estadoEnvio = meuGSM1.TestgetGSM(envio);
+  estadoEnvio = meuGSM1.httpWriteGET(pacote);
 
   Serial.print("estadoEnvio: ");
   Serial.println(estadoEnvio);

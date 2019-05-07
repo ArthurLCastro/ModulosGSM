@@ -57,7 +57,7 @@ void loop(){
   url = "https://castroarthurelectronics.000webhostapp.com/get/add.php";
   envio = url + "?" + sensor1 + "&" + sensor2 + "&" + sensor3;
 
-  estadoEnvio = meuGSM1.getGSM(envio);
+  estadoEnvio = meuGSM1.httpWriteGET(envio);
 /*
   if (estadoEnvio == 1){
     Serial.println("[DEBUG] Dados enviados ao Servidor com sucesso!");
