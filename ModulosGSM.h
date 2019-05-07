@@ -16,6 +16,8 @@ class ModulosGSM{
 		String infoGSM();
 		String ligarGSM(String);
 		bool getGSM(String);
+		bool TestgetGSM(String);
+		bool comando(String, String);
 };
 
 #endif
