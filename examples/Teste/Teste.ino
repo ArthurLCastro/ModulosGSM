@@ -27,7 +27,8 @@ void loop(){
 
   url = "https://castroarthurelectronics.000webhostapp.com/get/add.php";
   pacote = url + "?" + sensor1 + "&" + sensor2 + "&" + sensor3;
-
+//Ex.: https://castroarthurelectronics.000webhostapp.com/get/add.php?temp=12.0&umid=23.0&lum=34.0
+  
   estadoEnvio = meuGSM1.httpWriteGET(pacote);
 
   Serial.print("estadoEnvio: ");
@@ -38,18 +39,18 @@ void loop(){
 
 double lerTemperatura(){
   // Desenvolver a função de leitura do sensor
-  double s1 = 28.6;
+  double s1 = 26.2;
   return s1;
 }
 
 double lerUmidade(){
   // Desenvolver a função de leitura do sensor
-  double s2 = 15.3;
+  double s2 = 16.3;
   return s2;
 }
 
 double lerLuminosidade(){
   // Desenvolver a função de leitura do sensor
-  double s3 = 94.6;
+  double s3 = 24.6;
   return s3;
 }

@@ -71,77 +71,85 @@ bool ModulosGSM::httpWriteGET(String urlDados){
   estadoEnvio = comando("AT+SAPBR=3,1,\"Contype\",\"GPRS\"\n", "AT+SAPBR=3,1,\"Contype\",\"GPRS\"\r\nOK\r\n");
   delay(50);
   if(estadoEnvio == false){
+Serial.println("[DEBUG] ERROR comando AT 1");
     return;
   }
   estadoEnvio = comando("AT+SAPBR=3,1,\"APN\",\"www\"\n", "AT+SAPBR=3,1,\"APN\",\"www\"\r\nOK\r\n");
   delay(50);
   if(estadoEnvio == false){
+Serial.println("[DEBUG] ERROR comando AT 2");
     return;
   }
+  estadoEnvio = comando("AT+SAPBR=1,1\n", "Qualquer");
+  delay(50);
+
+  estadoEnvio = comando("AT+SAPBR=2,1\n", "AT+SAPBR=2,1\r\nERROR\r\n");
+  delay(50);
+  if(estadoEnvio == true){
+Serial.println("[DEBUG] ERROR comando AT 4");
+    return;
+  }
+  estadoEnvio = comando("AT+HTTPINIT\n", "Qualquer");
+  delay(50);
+
+  estadoEnvio = comando("AT+HTTPSSL=1\n", "AT+HTTPSSL=1\r\nOK\r\n");
+  delay(50);
+  if(estadoEnvio == false){
+Serial.println("[DEBUG] ERROR comando AT 6");
+    return;
+  }
+  estadoEnvio = comando("AT+HTTPPARA=\"CID\",1\n", "AT+HTTPPARA=\"CID\",1\r\nOK\r\n");
+  delay(50);
+  if(estadoEnvio == false){
+Serial.println("[DEBUG] ERROR comando AT 7");
+    return;
+  }
+  estadoEnvio = comando("AT+HTTPPARA=\"URL\",\"" + urlDados + "\"\n", "Qualquer");
+  delay(50);
+  if(estadoEnvio == false){
+Serial.println("[DEBUG] ERROR comando AT 8");
+    return;
+  }
+  estadoEnvio = comando("AT+HTTPACTION=0\n", "Qualquer");
+  delay(50);
 
   return estadoEnvio;         //Comando só será executado se o estadoEnvio for true
-/*
-  estadoEnvio = comando("AT+SAPBR=1,1\n", ""); // Adicionar respEsperada
-  delay(50);
-  if(estadoEnvio == false){
-    return estadoEnvio;
-    break;
-  }
-  estadoEnvio = comando("AT+SAPBR=2,1\n", ""); // Adicionar respEsperada
-  delay(50);
-  if(estadoEnvio == false){
-    return estadoEnvio;
-    break;
-  }
-  estadoEnvio = comando("AT+HTTPINIT\n", ""); // Adicionar respEsperada
-  delay(50);
-  if(estadoEnvio == false){
-    return estadoEnvio;
-    break;
-  }
-  estadoEnvio = comando("AT+HTTPSSL=1\n", ""); // Adicionar respEsperada
-  delay(50);
-  if(estadoEnvio == false){
-    return estadoEnvio;
-    break;
-  }
-  estadoEnvio = comando("AT+HTTPPARA=\"CID\",1\n", ""); // Adicionar respEsperada
-  delay(50);
-  if(estadoEnvio == false){
-    return estadoEnvio;
-    break;
-  }
-  estadoEnvio = comando("AT+HTTPPARA=\"URL\",\"" + urlDados + "\n", ""); // Adicionar respEsperada
-  delay(50);
-  if(estadoEnvio == false){
-    return estadoEnvio;
-    break;
-  }
-  estadoEnvio = comando("AT+HTTPACTION=0\n", ""); // Adicionar respEsperada
-  delay(50);
-  if(estadoEnvio == false){
-    return estadoEnvio;
-    break;
-  }
 
-  return estadoEnvio; 
+}
 
-*/
+bool ModulosGSM::comando(String comandoAT, String respEsperada){
+  static unsigned int tentativas = 5;
+  bool comandOk = false, retorno = false;
+  unsigned int i=1;
 
-/*
-//Avaliar o RISCO do módulo travar no While caso não haja conexão com o módulo
-  while (estadoEnvio != true){
-    moduloGSM->print("AT+SAPBR=3,1,\"Contype\",\"GPRS\"\n");
-    if(moduloGSM->available()>0){
-      if(respostaGSM() == "AT+SAPBR=3,1,\"Contype\",\"GPRS\"\r\nOK\r\n"){
-        estadoEnvio = true;
-      } else {
-        estadoEnvio = false;
+Serial.print("[DEBUG] comandoAT: ");
+Serial.println(comandoAT);
+
+  for(i=1; i<=tentativas; i++){
+    if (comandOk == false){
+      moduloGSM->print(comandoAT);
+      if(moduloGSM->available()>0){
+
+        if(respEsperada == "Qualquer"){
+          comandOk = true;
+          return retorno = true;
+        } else {
+          if(respostaGSM() == respEsperada){
+            comandOk = true;
+            return retorno = true;
+          } else {
+            comandOk = false;
+          }
+        }
+  
       }
+    } else {
+      return retorno = true;
     }
-    delay(50);
+    delay(100);
   }
-*/
+
+  return retorno;
 }
 
 String ModulosGSM::httpReadGET(String urlDados){
@@ -166,153 +174,3 @@ String ModulosGSM::httpReadGET(String urlDados){
   }
   return retorno;
 }
-
-
-bool ModulosGSM::comando(String comandoAT, String respEsperada){
-  static unsigned int tentativas = 5;
-  bool comandOk = false, retorno = false;
-  unsigned int i=1;
-
-  for(i=1; i<=tentativas; i++){
-    if (comandOk == false){
-      moduloGSM->print(comandoAT);
-      if(moduloGSM->available()>0){
-        if(respostaGSM() == respEsperada){
-          comandOk = true;
-          return retorno = true;
-        } else {
-          comandOk = false;
-        }
-      }
-    } else {
-      return retorno = true;
-    }
-    delay(100);
-  }
-
-  return retorno;
-}
-
-/*
-bool ModulosGSM::getGSM(String urlDados){
-  bool estadoConexao = false;
-
-  int tempo = 5000;
-
-  while (estadoConexao != true){
-    moduloGSM->print("AT+SAPBR=3,1,\"Contype\",\"GPRS\"");
-    delay(tempo);
-    if(moduloGSM->available()>0){
-      if(respostaGSM() == "AT+SAPBR=3,1,\"Contype\",\"GPRS\"\r\nOK\r\n"){
-        estadoConexao = true;
-      } else {
-        estadoConexao = false;
-      }
-    }
-  }
-  moduloGSM->print("AT+SAPBR=3,1,\"APN\",\"www\"\n");
-  delay(tempo);
-  if(moduloGSM->available()>0){
-    Serial.print(respostaGSM());
-  }
-  moduloGSM->print("AT+SAPBR=1,1\n");
-  delay(tempo);
-  if(moduloGSM->available()>0){
-    Serial.print(respostaGSM());
-  }
-  moduloGSM->print("AT+SAPBR=2,1\n");
-  delay(tempo);
-  if(moduloGSM->available()>0){
-    Serial.print(respostaGSM());
-  }
-  moduloGSM->print("AT+HTTPINIT\n");
-  delay(tempo);
-  if(moduloGSM->available()>0){
-    Serial.print(respostaGSM());
-  }
-  moduloGSM->print("AT+HTTPSSL=1\n");
-  delay(tempo);
-  if(moduloGSM->available()>0){
-    Serial.print(respostaGSM());
-  }
-  moduloGSM->print("AT+HTTPPARA=\"CID\",1\n");
-  delay(tempo);
-  if(moduloGSM->available()>0){
-    Serial.print(respostaGSM());
-  }
-  moduloGSM->print("AT+HTTPPARA=\"URL\",\"" + urlDados + "\n");
-  delay(tempo);
-  if(moduloGSM->available()>0){
-    Serial.print(respostaGSM());
-  }
-  moduloGSM->print("AT+HTTPACTION=0\n");
-  delay(tempo);
-  if(moduloGSM->available()>0){
-    Serial.print(respostaGSM());
-  }
-//  moduloGSM->print("AT+HTTPREAD\n");
-//  delay(5);
-
-  estadoConexao = true;
-  return estadoConexao;
-}
-*/
-
-/*
-bool ModulosGSM::getGSM(){
-  //String retorno = "";
-  bool estadoConexao = "";
-  int tempo = 1000;
-
-  moduloGSM->print("AT+SAPBR=3,1,\"Contype\",\"GPRS\"");
-  if(moduloGSM->available()>0){
-    Serial.print(respostaGSM());
-  }
-  delay(tempo);
-  moduloGSM->print("AT+SAPBR=3,1,\"APN\",\"www\"\n");
-  if(moduloGSM->available()>0){
-    Serial.print(respostaGSM());
-  }
-  delay(tempo);
-  moduloGSM->print("AT+SAPBR=1,1\n");
-  if(moduloGSM->available()>0){
-    Serial.print(respostaGSM());
-  }
-  delay(tempo);
-  moduloGSM->print("AT+SAPBR=2,1\n");
-  if(moduloGSM->available()>0){
-    Serial.print(respostaGSM());
-  }
-  delay(tempo);
-  moduloGSM->print("AT+HTTPINIT\n");
-  if(moduloGSM->available()>0){
-    Serial.print(respostaGSM());
-  }
-  delay(tempo);
-  moduloGSM->print("AT+HTTPSSL=1\n");
-  if(moduloGSM->available()>0){
-    Serial.print(respostaGSM());
-  }
-  delay(tempo);
-  moduloGSM->print("AT+HTTPPARA=\"CID\",1\n");
-  if(moduloGSM->available()>0){
-    Serial.print(respostaGSM());
-  }
-  delay(tempo);
-  moduloGSM->print("AT+HTTPPARA=\"URL\",\"https://castroarthurelectronics.000webhostapp.com/get/add.php?temp=28&umid=25&lum=70\"\n");
-  if(moduloGSM->available()>0){
-    Serial.print(respostaGSM());
-  }
-  delay(tempo);
-  moduloGSM->print("AT+HTTPACTION=0\n");
-  if(moduloGSM->available()>0){
-    Serial.print(respostaGSM());
-  }
-  delay(tempo);
-//  moduloGSM->print("AT+HTTPREAD\n");
-//  delay(5);
-
-  estadoConexao = true;
-  return estadoConexao;
-}
-*/
