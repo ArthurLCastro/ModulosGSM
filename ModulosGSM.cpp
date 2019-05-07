@@ -110,7 +110,7 @@ bool ModulosGSM::TestgetGSM(String urlDados){
     return estadoEnvio;
     break;
   }
-  estadoEnvio = comando("AT+HTTPPARA=\"URL\",\"https://castroarthurelectronics.000webhostapp.com/get/add.php?temp=28&umid=25&lum=70\"\n", ""); // Adicionar respEsperada
+  estadoEnvio = comando("AT+HTTPPARA=\"URL\",\"" + urlDados + "\n", ""); // Adicionar respEsperada
   delay(50);
   if(estadoEnvio == false){
     return estadoEnvio;
