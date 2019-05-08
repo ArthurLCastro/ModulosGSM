@@ -16,8 +16,8 @@ class ModulosGSM{
 		bool testeConexaoGSM();
 		String infoGSM();
 		String ligarGSM(String);
-		bool httpWriteGET(String);
-		String httpReadGET(String);
+		bool httpWriteGET(String, bool);
+		String httpReadGET(String, bool);
 };
 
 #endif
