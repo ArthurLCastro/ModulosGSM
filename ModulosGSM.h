@@ -17,6 +17,7 @@ class ModulosGSM{
 		String infoGSM();
 		String ligarGSM(String);
 		bool enviarSMS(String, String);
+		String localizaGSM();
 		bool httpWriteGET(String, bool);
 		String httpReadGET(String, bool);
 };

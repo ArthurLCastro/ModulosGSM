@@ -14,3 +14,4 @@
 	httpWriteGET		KEYWORD2
 	httpReadGET			KEYWORD2
 	enviarSMS			KEYWORD2
+	localizaGSM			KEYWORD2

@@ -101,6 +101,27 @@ bool ModulosGSM::enviarSMS(String telefone, String mensagem){               // E
   return conexaoSMS;        // Ainda não muito confiável
 }
 
+String ModulosGSM::localizaGSM(){
+/*
+AT+CGPSPWR=1
+AT+CGPSSTATUS?
+AT+CGPSINF=0
+AT+CGPSOUT=8
+AT+CGPSRST=0
+AT+CGPSRST=1
+AT+CGPSPWR=0
+
+AT+CGPSPWR=1
+AT+CGPSRST=1
+AT+CGPSSTATUS?
+AT+CGPSINF=0
+AT+CGPSINF=32
+AT+CGPSSTATUS?
+AT+CGPSOUT=32
+AT+CGPSOUT=0
+*/
+}
+
 
 bool ModulosGSM::httpWriteGET(String urlDados, bool https){
   bool estadoEnvio = false;
