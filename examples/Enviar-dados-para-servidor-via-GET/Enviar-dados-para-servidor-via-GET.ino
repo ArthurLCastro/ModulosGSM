@@ -34,7 +34,6 @@ ModulosGSM meuGSM1;
 SoftwareSerial serialGSM1(RX_GSM1, TX_GSM1);
 
 // DECLARAÇÕES DE VARIÁVEIS GLOBAIS:
-//String pagina;
   String url = "", pacote = "";
   String sensor1, sensor2, sensor3;
   bool estadoEnvio;
@@ -47,9 +46,6 @@ void setup(){
 }
 
 void loop(){
-//  pagina = meuGSM1.lerDadosWebGSM();
-//  Serial.println(pagina);
-
   sensor1 = "temp=" + String(lerTemperatura());
   sensor2 = "umid=" + String(lerUmidade());
   sensor3 = "lum=" + String(lerLuminosidade());
