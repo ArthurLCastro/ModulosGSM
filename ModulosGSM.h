@@ -7,6 +7,7 @@
 class ModulosGSM{
 	private:
 		Stream *moduloGSM;
+		bool comando(String, String);
 	public:
 		ModulosGSM();
 		ModulosGSM(Stream&);
@@ -15,6 +16,8 @@ class ModulosGSM{
 		bool testeConexaoGSM();
 		String infoGSM();
 		String ligarGSM(String);
+		bool httpWriteGET(String, bool);
+		String httpReadGET(String, bool);
 };
 
 #endif
