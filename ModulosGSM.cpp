@@ -1,7 +1,7 @@
 #include <ModulosGSM.h>
 
 // Descomentando a linha abaixo será possível vizualizar o DEBUG pela Serial
-#define DEBUG
+//#define DEBUG
 
 ModulosGSM::ModulosGSM(){
 }
@@ -67,6 +67,40 @@ String ModulosGSM::ligarGSM(String telefone){        // Faz ligação para outro
 
   return retorno;
 }
+
+bool ModulosGSM::enviarSMS(String telefone, String mensagem){               // Envia uma mensagem de texto SMS para outro aparelho
+  bool conexaoSMS = false;
+
+  conexaoSMS = comando("AT+CMGS=?\n", "AT+CMGS=?\r\nOK\r\n");     // Envia o comando de Teste
+  delay(50);
+  if(conexaoSMS == false){
+    return;
+  }
+
+  conexaoSMS = comando("AT+CMGF=1\n", "AT+CMGF=1\r\nOK\r\n");     // Envia o comando de Teste
+  delay(50);
+  if(conexaoSMS == false){
+    return;
+  }
+
+  moduloGSM->print("AT+CMGS=\"" + telefone + "\"\n");           // Inicia Modo Texto para envio de mensagem
+  moduloGSM->print(mensagem + "\n");                            // Escreve a Mensagem
+  moduloGSM->print((char)26);                                   // Envia o caracter referente a "Ctrl+Z" que fecha o Modo Texto no caso deste estar aberto
+
+/*
+  if(moduloGSM->available()>0){
+    String resp = respostaGSM();
+    if (resp CONTEM "OK"){    // Criar função para comparar o conteúdo de uma frase com uma palavra específica
+      conexaoSMS = true;
+    } else {
+      conexaoSMS = false;  
+    }
+  }
+*/
+
+  return conexaoSMS;        // Ainda não muito confiável
+}
+
 
 bool ModulosGSM::httpWriteGET(String urlDados, bool https){
   bool estadoEnvio = false;

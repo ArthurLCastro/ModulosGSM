@@ -1,6 +1,6 @@
-// Exemplo 004 - Ler uma Página WEb via GET
+// Exemplo 005 - Envio de SMS
 // Arthur L. Castro
-// Maio de 2019
+// Abril de 2019
 
 /*
    Este código tem como objetivo...
@@ -25,19 +25,18 @@
 #include <ModulosGSM.h>
 
 // DEFINIÇÕES:
-#define RX_GSM1 8          // ligar o Pino 8 do Arduino no TX do Módulo "SIM808 EVB-V3.2"
-#define TX_GSM1 7          // ligar o Pino 7 do Arduino no RX do Módulo "SIM808 EVB-V3.2"
-#define intervalo 10000    // Intervalo entre os envios de dados ao servidor
+#define RX_GSM1 8         // ligar o Pino 8 do Arduino no TX do Módulo "SIM808 EVB-V3.2"
+#define TX_GSM1 7         // ligar o Pino 7 do Arduino no RX do Módulo "SIM808 EVB-V3.2"
+#define intervalo 20000
 
 // CRIAÇÃO DE OBJETOS - Para emular as comunicações Seriais nos pinos digitais definidos acima:
 ModulosGSM meuGSM1;
 SoftwareSerial serialGSM1(RX_GSM1, TX_GSM1);
 
 // DECLARAÇÕES DE VARIÁVEIS GLOBAIS:
-  String pagina;
-  String url = "";
-  bool estadoEnvio;
-  bool conSegura = 1;       // '1' para conexões HTTPS ou '0' para conexões HTTP
+String numero = "Insira_aqui_o_numero_que_receberá_o_SMS";    // Define o numero que receberá o SMS
+String msg = "Mensagem SMS enviada do Modulo GSM!";           // Define a Mensagem a ser transmitida
+bool estadoSMS = false;                                       // Indica se a Mensagem foi enviada com Sucesso
 
 void setup(){
   Serial.begin(9600);                       // Inicia a comunicação Serial a uma taxa de transmissão de 9600
@@ -46,11 +45,14 @@ void setup(){
 }
 
 void loop(){
-// Se a página for http (conSegura = 0), deve-se pôr a parte "http://" na URL a ser enviada
-  url = "https://www.google.com.br/";
-
-  pagina = meuGSM1.httpReadGET(url, conSegura);
-  Serial.println(pagina);
-
-  delay(intervalo);
+  estadoSMS = meuGSM1.enviarSMS(numero, msg);
+  
+  if(estadoSMS == true){
+    Serial.println("Mensagem enviada para " + numero + " :");
+    Serial.println("  -> " + msg);
+  } else {
+    Serial.println("[ERRO] Erro ao enviar SMS para " + numero);
+  }
+  
+  delay(intervalo);         // Intevalo entre envios
 }
