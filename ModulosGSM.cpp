@@ -1,6 +1,7 @@
 #include <ModulosGSM.h>
 
-//#define DEBUG
+// Descomentando a linha abaixo será possível vizualizar o DEBUG pela Serial
+#define DEBUG
 
 ModulosGSM::ModulosGSM(){
 }
@@ -170,14 +171,17 @@ bool ModulosGSM::comando(String comandoAT, String respEsperada){
   return retorno;
 }
 
-String ModulosGSM::httpReadGET(String urlDados, bool https){
+String ModulosGSM::httpReadGET(String url, bool https){
   bool estadoEnvio;
   String retorno = "", pagina = "";
 
-  estadoEnvio = httpWriteGET(urlDados, https);
+  estadoEnvio = httpWriteGET(url, https);
 
   if(estadoEnvio == true){
     moduloGSM->print("AT+HTTPREAD\n");
+#ifdef DEBUG
+    Serial.println("READ executado");
+#endif
       if(moduloGSM->available()>0){
         pagina = respostaGSM();
         if(pagina != "AT+HTTPREAD\r\nERROR\r\n"){
