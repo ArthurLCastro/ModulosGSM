@@ -1,7 +1,8 @@
 #include <ModulosGSM.h>
 
 // Descomentando a linha abaixo será possível vizualizar o DEBUG pela Serial
-//#define DEBUG
+#define DEBUG
+#define DEBUG_GPS
 
 ModulosGSM::ModulosGSM(){
 }
@@ -102,7 +103,29 @@ bool ModulosGSM::enviarSMS(String telefone, String mensagem){               // E
 }
 
 String ModulosGSM::localizaGSM(){
+  pwrGPS(1);
+  moduloGSM->print("AT+CGPSINF=0\n");
+
+
+
+
 /*
+AT+CGPSPWR=1
+
+
+
+// https://www.prometec.net/comandos-at-gsm-gprs-gps/
+AT+CGPSPWR=1
+AT+CGPSINF=0
+AT+CGPSPWR=0
+
+809.462000
+3454.892400
+160.500000
+2019 05 09
+
+
+
 AT+CGPSPWR=1
 AT+CGPSSTATUS?
 AT+CGPSINF=0
@@ -122,6 +145,42 @@ AT+CGPSOUT=0
 */
 }
 
+bool ModulosGSM::pwrGPS(bool estado){
+  bool retorno = false;
+
+  if(estado == true){
+    moduloGSM->print("AT+CGPSPWR=1\n");
+    if (moduloGSM->available()>0){
+      if (respostaGSM() == "AT+CGPSPWR=1\r\nOK\r\n"){
+        #ifdef DEBUG_GPS
+          Serial.println("[DEBUG] Resposta 1 OK");
+        #endif
+        retorno = true;
+      } else {
+        #ifdef DEBUG_GPS
+          Serial.println("[DEBUG] Resposta 1 ERROR");
+        #endif
+        retorno = false;
+      }
+    }
+  } else {
+    moduloGSM->print("AT+CGPSPWR=0\n");
+    if (moduloGSM->available()>0){
+      if (respostaGSM() == "AT+CGPSPWR=0\r\nOK\r\n"){
+        #ifdef DEBUG_GPS
+          Serial.println("[DEBUG] Resposta 2 OK");
+        #endif
+        retorno = true;
+      } else {
+        #ifdef DEBUG_GPS
+          Serial.println("[DEBUG] Resposta 2 ERROR");
+        #endif
+        retorno = false;
+      }
+    }
+  }
+  return retorno;
+}
 
 bool ModulosGSM::httpWriteGET(String urlDados, bool https){
   bool estadoEnvio = false;
