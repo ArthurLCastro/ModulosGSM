@@ -21,6 +21,7 @@ class ModulosGSM{
 		String localizaGSM();
 		bool httpWriteGET(String, bool);
 		String httpReadGET(String, bool);
+		String infoGPS();
 		bool pwrGPS(bool);     //Por enquanto é publico
 };
 

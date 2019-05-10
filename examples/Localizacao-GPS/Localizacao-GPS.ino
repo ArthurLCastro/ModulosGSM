@@ -34,8 +34,8 @@ ModulosGSM meuGSM1;
 SoftwareSerial serialGSM1(RX_GSM1, TX_GSM1);
 
 // DECLARAÇÕES DE VARIÁVEIS GLOBAIS:
-String retorno = "";
-String latitude = "", longitude = "";
+String gps = "";
+//String latitude = "", longitude = ""; altitude = "";
 
 void setup(){
   Serial.begin(9600);                       // Inicia a comunicação Serial a uma taxa de transmissão de 9600
@@ -44,10 +44,16 @@ void setup(){
 }
 
 void loop(){
-  retorno = meuGSM1.localizaGSM();
+  gps = meuGSM1.infoGPS();
 
-  latitude = lat(retorno);
-  longitude = lon(retorno);
+  Serial.println("Informacoes de GPS - Modulo GSM: ");
+  Serial.println(gps);
+  Serial.print("\n");
+
+/*
+  latitude = meuGSM1.latitudeGPS(gps);
+  longitude = meuGSM1.longitudeGPS(gps);
+  altitude = meuGSM1.altitudeGPS(gps);
 
   Serial.println("-------------------------------------");
   Serial.println("|     Localizacao do Modulo GSM     |");
@@ -56,19 +62,9 @@ void loop(){
   Serial.println(latitude);
   Serial.print("\t> Longitude: ");
   Serial.println(longitude);
+  Serial.print("\t> Altitude: ");
+  Serial.println(altitude);
   Serial.println("-------------------------------------\n");
-
-  delay(intervalo);         // Intevalo entre envios
-}
-
-String lat(String local){
-  // Tratar o retorno do Módulo GSM para retornar apenas a latitude
-  lat = local;        // Por enquanto
-  return lat;
-}
-
-String lon(String local){
-  // Tratar o retorno do Módulo GSM para retornar apenas a longitude
-  lon = local;        // Por enquanto
-  return lon;
+*/
+  delay(intervalo);
 }

@@ -102,17 +102,25 @@ bool ModulosGSM::enviarSMS(String telefone, String mensagem){               // E
   return conexaoSMS;        // Ainda não muito confiável
 }
 
-String ModulosGSM::localizaGSM(){
-  pwrGPS(1);
-  moduloGSM->print("AT+CGPSINF=0\n");
+String ModulosGSM::infoGPS(){
+  String resp = "", modo = "";
 
+  moduloGSM->print("AT+CGPSPWR=1\n");
+  delay(10);
 
+  moduloGSM->print("AT+CGPSINF=2\n");
+  delay(50);
+  if (moduloGSM->available()>0){
+    resp = respostaGSM();
+  }
+  
+  moduloGSM->print("AT+CGPSPWR=0\n");
+  delay(10);
 
+  return resp;
 
 /*
 AT+CGPSPWR=1
-
-
 
 // https://www.prometec.net/comandos-at-gsm-gprs-gps/
 AT+CGPSPWR=1
