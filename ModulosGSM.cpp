@@ -1,7 +1,7 @@
 #include <ModulosGSM.h>
 
 // Descomentando a linha abaixo será possível vizualizar o DEBUG pela Serial
-#define DEBUG
+//#define DEBUG
 #define DEBUG_GPS
 
 ModulosGSM::ModulosGSM(){
@@ -102,92 +102,63 @@ bool ModulosGSM::enviarSMS(String telefone, String mensagem){               // E
   return conexaoSMS;        // Ainda não muito confiável
 }
 
-String ModulosGSM::infoGPS(){
-  String resp = "", modo = "";
-
-  moduloGSM->print("AT+CGPSPWR=1\n");
-  delay(10);
-
-  moduloGSM->print("AT+CGPSINF=2\n");
-  delay(50);
-  if (moduloGSM->available()>0){
-    resp = respostaGSM();
-  }
-  
-  moduloGSM->print("AT+CGPSPWR=0\n");
-  delay(10);
-
-  return resp;
-
-/*
-AT+CGPSPWR=1
-
-// https://www.prometec.net/comandos-at-gsm-gprs-gps/
-AT+CGPSPWR=1
-AT+CGPSINF=0
-AT+CGPSPWR=0
-
-809.462000
-3454.892400
-160.500000
-2019 05 09
-
-
-
-AT+CGPSPWR=1
-AT+CGPSSTATUS?
-AT+CGPSINF=0
-AT+CGPSOUT=8
-AT+CGPSRST=0
-AT+CGPSRST=1
-AT+CGPSPWR=0
-
-AT+CGPSPWR=1
-AT+CGPSRST=1
-AT+CGPSSTATUS?
-AT+CGPSINF=0
-AT+CGPSINF=32
-AT+CGPSSTATUS?
-AT+CGPSOUT=32
-AT+CGPSOUT=0
-*/
-}
-
-bool ModulosGSM::pwrGPS(bool estado){
-  bool retorno = false;
+bool ModulosGSM::powerGPS(bool estado){
+  bool estadoComando = false;
 
   if(estado == true){
-    moduloGSM->print("AT+CGPSPWR=1\n");
-    if (moduloGSM->available()>0){
-      if (respostaGSM() == "AT+CGPSPWR=1\r\nOK\r\n"){
-        #ifdef DEBUG_GPS
-          Serial.println("[DEBUG] Resposta 1 OK");
-        #endif
-        retorno = true;
-      } else {
-        #ifdef DEBUG_GPS
-          Serial.println("[DEBUG] Resposta 1 ERROR");
-        #endif
-        retorno = false;
-      }
-    }
+    estadoComando = comando("AT+CGPSPWR=1\n", "AT+CGPSPWR=1\r\nOK\r\n");
   } else {
-    moduloGSM->print("AT+CGPSPWR=0\n");
-    if (moduloGSM->available()>0){
-      if (respostaGSM() == "AT+CGPSPWR=0\r\nOK\r\n"){
-        #ifdef DEBUG_GPS
-          Serial.println("[DEBUG] Resposta 2 OK");
-        #endif
-        retorno = true;
-      } else {
-        #ifdef DEBUG_GPS
-          Serial.println("[DEBUG] Resposta 2 ERROR");
-        #endif
-        retorno = false;
-      }
-    }
+    estadoComando = comando("AT+CGPSPWR=0\n", "AT+CGPSPWR=0\r\nOK\r\n");
   }
-  return retorno;
+  delay(1000);
+  return estadoComando;
+}
+
+String ModulosGSM::dadosGPS(){
+  String resp = "";
+  bool estadoComando = false;
+  static unsigned int tempoConnGPS = 60000;    // 1min
+
+  estadoComando = powerGPS(true);
+  if(estadoComando == false){
+    #ifdef DEBUG_GPS
+      Serial.println("[DEBUG] ERROR comando AT+CGPSPWR=1");
+    #endif
+    return;
+  }
+
+  #ifdef DEBUG_GPS
+    Serial.println("[DEBUG] Aguardando tempo para efetuar a leitura do GPS...");
+  #endif
+  delay(tempoConnGPS);
+  
+  moduloGSM->flush();
+  moduloGSM->print("AT+CGPSINF=2\n");
+  delay(50);
+  if(moduloGSM->available()>0){
+    moduloGSM->flush();
+    resp = respostaGSM();
+    delay(10);
+  }
+
+//  String frase = "Isto eh uma frase";
+//  int i = 0;
+
+//  Serial.begin(9600);
+//  i = frase.indexOf('f');
+//  Serial.print("Int: ");
+//  Serial.println(i);
+//  Serial.println(frase.substring(i, 14));
+
+  estadoComando = powerGPS(false);
+  if(estadoComando == false){
+    #ifdef DEBUG_GPS
+      Serial.println("[DEBUG] ERROR comando AT+CGPSPWR=0");
+    #endif
+    return;
+  }
+
+  return resp;
 }
 
 bool ModulosGSM::httpWriteGET(String urlDados, bool https){
