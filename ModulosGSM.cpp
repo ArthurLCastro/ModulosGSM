@@ -107,31 +107,25 @@ bool ModulosGSM::powerGPS(bool estado){
 
   if(estado == true){
     estadoComando = comando("AT+CGPSPWR=1\n", "AT+CGPSPWR=1\r\nOK\r\n");
-  } else {
+  }
+  if(estado == false){
     estadoComando = comando("AT+CGPSPWR=0\n", "AT+CGPSPWR=0\r\nOK\r\n");
   }
+
+  if(estadoComando == false){
+    #ifdef DEBUG_GPS
+      Serial.println("[DEBUG] ERROR comando AT+CGPSPWR");
+    #endif
+    return;
+  }
+
   delay(1000);
   return estadoComando;
 }
 
 String ModulosGSM::dadosGPS(){
   String resp = "";
-  bool estadoComando = false;
-  static unsigned int tempoConnGPS = 60000;    // 1min
 
-  estadoComando = powerGPS(true);
-  if(estadoComando == false){
-    #ifdef DEBUG_GPS
-      Serial.println("[DEBUG] ERROR comando AT+CGPSPWR=1");
-    #endif
-    return;
-  }
-
-  #ifdef DEBUG_GPS
-    Serial.println("[DEBUG] Aguardando tempo para efetuar a leitura do GPS...");
-  #endif
-  delay(tempoConnGPS);
-  
   moduloGSM->flush();
   moduloGSM->print("AT+CGPSINF=2\n");
   delay(50);
@@ -141,24 +135,57 @@ String ModulosGSM::dadosGPS(){
     delay(10);
   }
 
-//  String frase = "Isto eh uma frase";
-//  int i = 0;
-
-//  Serial.begin(9600);
-//  i = frase.indexOf('f');
-//  Serial.print("Int: ");
-//  Serial.println(i);
-//  Serial.println(frase.substring(i, 14));
-
-  estadoComando = powerGPS(false);
-  if(estadoComando == false){
-    #ifdef DEBUG_GPS
-      Serial.println("[DEBUG] ERROR comando AT+CGPSPWR=0");
-    #endif
-    return;
-  }
-
   return resp;
+}
+
+String ModulosGSM::infoGPS(){
+  String respostaGSM = "", restoInfo1 = "", restoInfo2 = "", restoInfo3 = "";
+  unsigned int indiceVirg1 = 0, indiceVirg2 = 0, indiceVirg3 = 0;
+  String hora = "", lat = "";
+
+  respostaGSM = dadosGPS();
+  #ifdef DEBUG_GPS
+    Serial.print("[DEBUG_infoGPS] respostaGSM: ");
+    Serial.println(respostaGSM);
+  #endif
+
+  indiceVirg1 = respostaGSM.indexOf(',');
+  restoInfo1 = respostaGSM.substring(indiceVirg1 + 1);
+
+  #ifdef DEBUG_GPS
+    Serial.print("[DEBUG_infoGPS] restoInfo1: ");
+    Serial.println(restoInfo1);
+  #endif
+
+  indiceVirg2 = restoInfo1.indexOf(',');
+  restoInfo2 = restoInfo1.substring(indiceVirg2 + 1);
+
+  #ifdef DEBUG_GPS
+    Serial.print("[DEBUG_infoGPS] restoInfo2: ");
+    Serial.println(restoInfo2);
+  #endif
+
+  indiceVirg3 = restoInfo2.indexOf(',');
+  restoInfo3 = restoInfo2.substring(indiceVirg3 + 1);
+
+  #ifdef DEBUG_GPS
+    Serial.print("[DEBUG_infoGPS] restoInfo3: ");
+    Serial.println(restoInfo3);
+  #endif
+
+  // ...
+  indiceVirg2 = indiceVirg2 + indiceVirg1;
+  indiceVirg3 = indiceVirg3 + indiceVirg2;
+
+  hora = respostaGSM.substring(indiceVirg1 + 1, indiceVirg2 + 1);
+  lat = respostaGSM.substring(indiceVirg2 + 2, indiceVirg3 + 2);
+
+  #ifdef DEBUG_GPS
+    Serial.print("[DEBUG_infoGPS] hora: ");
+    Serial.println(hora);
+    Serial.print("[DEBUG_infoGPS] lat: ");
+    Serial.println(lat);
+  #endif
 }
 
 bool ModulosGSM::httpWriteGET(String urlDados, bool https){

@@ -1,4 +1,4 @@
-// Exemplo 006 - Captura de Localização via GPS
+// Exemplo 006 - Dados de GPS
 // Arthur L. Castro
 // Maio de 2019
 
@@ -27,7 +27,7 @@
 // DEFINIÇÕES:
 #define RX_GSM1 8         // ligar o Pino 8 do Arduino no TX do Módulo "SIM808 EVB-V3.2"
 #define TX_GSM1 7         // ligar o Pino 7 do Arduino no RX do Módulo "SIM808 EVB-V3.2"
-#define estabilizarGPS 5000
+#define estabilizarGPS 60000
 #define intervalo 5000
 
 // CRIAÇÃO DE OBJETOS - Para emular as comunicações Seriais nos pinos digitais definidos acima:
@@ -35,43 +35,25 @@ ModulosGSM meuGSM1;
 SoftwareSerial serialGSM1(RX_GSM1, TX_GSM1);
 
 // DECLARAÇÕES DE VARIÁVEIS GLOBAIS:
-//String latitude = "", longitude = "", altitude = "", data = "", hora = "";
-String info = "";
+String gpsDados = "";
 
 void setup(){
   Serial.begin(9600);                       // Inicia a comunicação Serial a uma taxa de transmissão de 9600
   serialGSM1.begin(9600);                   // Inicia a comunicação Serial Emulada a uma taxa de transmissão de 9600
   meuGSM1.setupGSM(serialGSM1);
 
-  meuGSM1.powerGPS(true);               // Habilita a alimentação do GPS
-  Serial.println("[DEBUG] Aguardando estabilizacao do GPS...");
+  meuGSM1.powerGPS(true);               // Ativa alimentação do GPS
+  Serial.println("[DEBUG] Aguardando estabilização do GPS...");
   delay(estabilizarGPS);                // Tempo para estabilizar a conexão do GPS
 }
 
 void loop(){
-  Serial.println("[DEBUG] Loop");
-  info = meuGSM1.infoGPS();
-//  longitude = meuGSM1.longitudeGPS();
-//  altitude = meuGSM1.altitudeGPS();
-//  data = meuGSM1.dataGPS();
-//  hora = meuGSM1.horaGPS();
+  gpsDados = meuGSM1.dadosGPS();
+  Serial.println("Informacoes de GPS - Modulo GSM: ");
+  Serial.println(gpsDados);
+  Serial.print("\n");
+  
+  meuGSM1.powerGPS(false);               // Ativa alimentação do GPS
 
-//  meuGSM1.powerGPS(false);               // Desabilita a alimentação do GPS
-/*
-  Serial.println("-------------------------------------");
-  Serial.println("|     Localizacao do Modulo GSM     |");
-  Serial.println("-------------------------------------");
-  Serial.print("\t> Latitude: ");
-  Serial.println(latitude);
-  Serial.print("\t> Longitude: ");
-  Serial.println(longitude);
-  Serial.print("\t> Altitude: ");
-  Serial.println(altitude);
-  Serial.print("\t> Data: ");
-  Serial.println(data);
-  Serial.print("\t> Hora: ");
-  Serial.println(hora);
-  Serial.println("-------------------------------------\n");
-*/
   delay(intervalo);
 }
