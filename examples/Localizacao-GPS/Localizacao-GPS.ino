@@ -14,7 +14,6 @@
    funcionamento adequado deve-se pressioná-lo e verificar os LEDs de indicação
    na placa após a alimentação do sistema. Também é possível refazer os pontos de
    solda curto-circuitando o pushbutton.
-
    Lembrete:
    No caso de você querer utilizar a comunicação Serial física do Arduino,
    não será possível ver as respostas recebidas do Módulo no MonitorSerial.
@@ -44,12 +43,11 @@ void setup(){
   meuGSM1.setupGSM(serialGSM1);
 
   meuGSM1.powerGPS(true);               // Habilita a alimentação do GPS
-  Serial.println("[DEBUG] Aguardando estabilizacao do GPS...");
-  delay(estabilizarGPS);                // Tempo para estabilizar a conexão do GPS
+//  Serial.println("[DEBUG] Aguardando estabilizacao do GPS...");
+//  delay(estabilizarGPS);                // Tempo para estabilizar a conexão do GPS
 }
 
 void loop(){
-  Serial.println("[DEBUG] Loop");
   info = meuGSM1.infoGPS();
 //  longitude = meuGSM1.longitudeGPS();
 //  altitude = meuGSM1.altitudeGPS();

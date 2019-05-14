@@ -139,9 +139,47 @@ String ModulosGSM::dadosGPS(){
 }
 
 String ModulosGSM::infoGPS(){
-  String respostaGSM = "", restoInfo1 = "", restoInfo2 = "", restoInfo3 = "";
-  unsigned int indiceVirg1 = 0, indiceVirg2 = 0, indiceVirg3 = 0;
-  String hora = "", lat = "";
+  String respostaGSM = "",
+         restoInfo1 = "",
+         restoInfo2 = "",
+         restoInfo3 = "",
+         restoInfo4 = "",
+         restoInfo5 = "",
+         restoInfo6 = "",
+         restoInfo7 = "",
+         restoInfo8 = "",
+         restoInfo9 = "",
+         restoInfo10 = "",
+         restoInfo11 = "",
+         restoInfo12 = "",
+         restoInfo13 = "";
+
+  unsigned int indiceVirg1 = 0,
+               indiceVirg2 = 0,
+               indiceVirg3 = 0,
+               indiceVirg4 = 0,
+               indiceVirg5 = 0,
+               indiceVirg6 = 0,
+               indiceVirg7 = 0,
+               indiceVirg8 = 0,
+               indiceVirg9 = 0,
+               indiceVirg10 = 0,
+               indiceVirg11 = 0,
+               indiceVirg12 = 0,
+               indiceVirg13 = 0;
+
+  String hora = "",
+         lat = "",
+         indicadorNS = "",
+         lon = "",
+         indicadorEW = "",
+         posFixInd = "",
+         satelites = "",
+         HDOP = "",
+         altitude = "",
+         units = "",
+         geoidSepar = "",
+         units2 = "";
 
   respostaGSM = dadosGPS();
   #ifdef DEBUG_GPS
@@ -152,39 +190,94 @@ String ModulosGSM::infoGPS(){
   indiceVirg1 = respostaGSM.indexOf(',');
   restoInfo1 = respostaGSM.substring(indiceVirg1 + 1);
 
-  #ifdef DEBUG_GPS
-    Serial.print("[DEBUG_infoGPS] restoInfo1: ");
-    Serial.println(restoInfo1);
-  #endif
-
   indiceVirg2 = restoInfo1.indexOf(',');
   restoInfo2 = restoInfo1.substring(indiceVirg2 + 1);
-
-  #ifdef DEBUG_GPS
-    Serial.print("[DEBUG_infoGPS] restoInfo2: ");
-    Serial.println(restoInfo2);
-  #endif
 
   indiceVirg3 = restoInfo2.indexOf(',');
   restoInfo3 = restoInfo2.substring(indiceVirg3 + 1);
 
-  #ifdef DEBUG_GPS
-    Serial.print("[DEBUG_infoGPS] restoInfo3: ");
-    Serial.println(restoInfo3);
-  #endif
+  indiceVirg4 = restoInfo3.indexOf(',');
+  restoInfo4 = restoInfo3.substring(indiceVirg4 + 1);
+
+  indiceVirg5 = restoInfo4.indexOf(',');
+  restoInfo5 = restoInfo4.substring(indiceVirg5 + 1);
+
+  indiceVirg6 = restoInfo5.indexOf(',');
+  restoInfo6 = restoInfo5.substring(indiceVirg6 + 1);
+
+  indiceVirg7 = restoInfo6.indexOf(',');
+  restoInfo7 = restoInfo6.substring(indiceVirg7 + 1);
+
+  indiceVirg8 = restoInfo7.indexOf(',');
+  restoInfo8 = restoInfo7.substring(indiceVirg8 + 1);
+
+  indiceVirg9 = restoInfo8.indexOf(',');
+  restoInfo9 = restoInfo8.substring(indiceVirg9 + 1);
+
+  indiceVirg10 = restoInfo9.indexOf(',');
+  restoInfo10 = restoInfo9.substring(indiceVirg10 + 1);
+
+  indiceVirg11 = restoInfo10.indexOf(',');
+  restoInfo11 = restoInfo10.substring(indiceVirg11 + 1);
+
+  indiceVirg12 = restoInfo11.indexOf(',');
+  restoInfo12 = restoInfo11.substring(indiceVirg12 + 1);
+
+  indiceVirg13 = restoInfo12.indexOf(',');
+  restoInfo13 = restoInfo12.substring(indiceVirg13 + 1);
 
   // ...
   indiceVirg2 = indiceVirg2 + indiceVirg1;
   indiceVirg3 = indiceVirg3 + indiceVirg2;
+  indiceVirg4 = indiceVirg4 + indiceVirg3;
+  indiceVirg5 = indiceVirg5 + indiceVirg4;
+  indiceVirg6 = indiceVirg6 + indiceVirg5;
+  indiceVirg7 = indiceVirg7 + indiceVirg6;
+  indiceVirg8 = indiceVirg8 + indiceVirg7;
+  indiceVirg9 = indiceVirg9 + indiceVirg8;
+  indiceVirg10 = indiceVirg10 + indiceVirg9;
+  indiceVirg11 = indiceVirg11 + indiceVirg10;
+  indiceVirg12 = indiceVirg12 + indiceVirg11;
+  indiceVirg13 = indiceVirg13 + indiceVirg12;
 
   hora = respostaGSM.substring(indiceVirg1 + 1, indiceVirg2 + 1);
   lat = respostaGSM.substring(indiceVirg2 + 2, indiceVirg3 + 2);
+  indicadorNS = respostaGSM.substring(indiceVirg3 + 3, indiceVirg4 + 3);
+  lon = respostaGSM.substring(indiceVirg4 + 4, indiceVirg5 + 4);
+  indicadorEW = respostaGSM.substring(indiceVirg5 + 5, indiceVirg6 + 5);
+  posFixInd = respostaGSM.substring(indiceVirg6 + 6, indiceVirg7 + 6);
+  satelites = respostaGSM.substring(indiceVirg7 + 7, indiceVirg8 + 7);
+  HDOP = respostaGSM.substring(indiceVirg8 + 8, indiceVirg9 + 8);
+  altitude = respostaGSM.substring(indiceVirg9 + 9, indiceVirg10 + 9);
+  units = respostaGSM.substring(indiceVirg10 + 10, indiceVirg11 + 10);
+  geoidSepar = respostaGSM.substring(indiceVirg11 + 11, indiceVirg12 + 11);
+  units2 = respostaGSM.substring(indiceVirg12 + 12, indiceVirg13 + 12);
 
   #ifdef DEBUG_GPS
     Serial.print("[DEBUG_infoGPS] hora: ");
     Serial.println(hora);
     Serial.print("[DEBUG_infoGPS] lat: ");
     Serial.println(lat);
+    Serial.print("[DEBUG_infoGPS] indicadorNS: ");
+    Serial.println(indicadorNS);
+    Serial.print("[DEBUG_infoGPS] lon: ");
+    Serial.println(lon);
+    Serial.print("[DEBUG_infoGPS] indicadorEW: ");
+    Serial.println(indicadorEW);
+    Serial.print("[DEBUG_infoGPS] posFixInd: ");
+    Serial.println(posFixInd);
+    Serial.print("[DEBUG_infoGPS] satelites: ");
+    Serial.println(satelites);
+    Serial.print("[DEBUG_infoGPS] HDOP: ");
+    Serial.println(HDOP);
+    Serial.print("[DEBUG_infoGPS] altitude: ");
+    Serial.println(altitude);
+    Serial.print("[DEBUG_infoGPS] units: ");
+    Serial.println(units);
+    Serial.print("[DEBUG_infoGPS] geoidSepar: ");
+    Serial.println(geoidSepar);
+    Serial.print("[DEBUG_infoGPS] units2: ");
+    Serial.println(units2);
   #endif
 }
 
