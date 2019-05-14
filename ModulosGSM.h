@@ -8,7 +8,6 @@ class ModulosGSM{
 	private:
 		Stream *moduloGSM;
 		bool comando(String, String);
-		String relogioGPS();
 	public:
 		ModulosGSM();
 		ModulosGSM(Stream&);
@@ -23,10 +22,7 @@ class ModulosGSM{
 		String httpReadGET(String, bool);
 		String dadosGPS();
 		bool powerGPS(bool);
-		String infoGPS();
-		String latitudeGPS();
-		String longitudeGPS();
-		String altitudeGPS();
+		String infoGPS(unsigned int);
 		String dataGPS();
 		String horaGPS();
 };

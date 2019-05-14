@@ -2,7 +2,7 @@
 
 // Descomentando a linha abaixo será possível vizualizar o DEBUG pela Serial
 //#define DEBUG
-#define DEBUG_GPS
+//#define DEBUG_GPS
 
 ModulosGSM::ModulosGSM(){
 }
@@ -138,7 +138,7 @@ String ModulosGSM::dadosGPS(){
   return resp;
 }
 
-String ModulosGSM::infoGPS(){
+String ModulosGSM::infoGPS(unsigned int informacao){
   String respostaGSM = "",
          restoInfo1 = "",
          restoInfo2 = "",
@@ -279,6 +279,36 @@ String ModulosGSM::infoGPS(){
     Serial.print("[DEBUG_infoGPS] units2: ");
     Serial.println(units2);
   #endif
+
+  switch(informacao){
+    case 0:
+    default:
+      return respostaGSM;
+    case 1:
+      return hora;
+    case 2:
+      return lat;
+    case 3:
+      return indicadorNS;
+    case 4:
+      return lon;
+    case 5:
+      return indicadorEW;
+    case 6:
+      return posFixInd;
+    case 7:
+      return satelites;
+    case 8:
+      return HDOP;
+    case 9:
+      return altitude;
+    case 10:
+      return units;
+    case 11:
+      return geoidSepar;
+    case 12:
+      return units2;
+  }
 }
 
 bool ModulosGSM::httpWriteGET(String urlDados, bool https){

@@ -15,9 +15,6 @@
 	httpReadGET			KEYWORD2
 	enviarSMS			KEYWORD2
 	dadosGPS			KEYWORD2
-	powerGPS			KEYWORD2
-	latitudeGPS			KEYWORD2
-	longitudeGPS		KEYWORD2
 	altitudeGPS			KEYWORD2
 	dataGPS				KEYWORD2
 	horaGPS				KEYWORD2
