@@ -14,8 +14,7 @@
 	httpWriteGET		KEYWORD2
 	httpReadGET			KEYWORD2
 	enviarSMS			KEYWORD2
-	dadosGPS			KEYWORD2
-	altitudeGPS			KEYWORD2
+	infoGPS				KEYWORD2
 	dataGPS				KEYWORD2
 	horaGPS				KEYWORD2
 };

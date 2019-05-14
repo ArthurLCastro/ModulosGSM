@@ -8,6 +8,7 @@ class ModulosGSM{
 	private:
 		Stream *moduloGSM;
 		bool comando(String, String);
+		String dadosGPS();
 	public:
 		ModulosGSM();
 		ModulosGSM(Stream&);
@@ -20,7 +21,6 @@ class ModulosGSM{
 		String localizaGSM();
 		bool httpWriteGET(String, bool);
 		String httpReadGET(String, bool);
-		String dadosGPS();
 		bool powerGPS(bool);
 		String infoGPS(unsigned int);
 		String dataGPS();
