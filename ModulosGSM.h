@@ -8,21 +8,27 @@ class ModulosGSM{
 	private:
 		Stream *moduloGSM;
 		bool comando(String, String);
+		bool setGPRS();
 		String dadosGPS();
 	public:
 		ModulosGSM();
 		ModulosGSM(Stream&);
+
 		void setupGSM(Stream&);
 		String respostaGSM();
 		bool testeConexaoGSM();
 		String infoGSM();
+
 		String ligarGSM(String);
 		bool enviarSMS(String, String);
-		String localizaGSM();
+
 		bool httpWriteGET(String, bool);
 		String httpReadGET(String, bool);
+		bool httpWritePOST(String, bool, String, String);
+
 		bool powerGPS(bool);
 		String infoGPS(unsigned int);
+
 		String dataGPS();
 		String horaGPS();
 };

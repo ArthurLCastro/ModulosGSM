@@ -1,7 +1,7 @@
 #include <ModulosGSM.h>
 
 // Descomentando a linha abaixo será possível vizualizar o DEBUG pela Serial
-//#define DEBUG
+#define DEBUG
 //#define DEBUG_GPS
 
 ModulosGSM::ModulosGSM(){
@@ -88,7 +88,7 @@ bool ModulosGSM::enviarSMS(String telefone, String mensagem){               // E
   moduloGSM->print(mensagem + "\n");                            // Escreve a Mensagem
   moduloGSM->print((char)26);                                   // Envia o caracter referente a "Ctrl+Z" que fecha o Modo Texto no caso deste estar aberto
 
-/*
+  /*
   if(moduloGSM->available()>0){
     String resp = respostaGSM();
     if (resp CONTEM "OK"){    // Criar função para comparar o conteúdo de uma frase com uma palavra específica
@@ -97,9 +97,238 @@ bool ModulosGSM::enviarSMS(String telefone, String mensagem){               // E
       conexaoSMS = false;  
     }
   }
-*/
+  */
 
   return conexaoSMS;        // Ainda não muito confiável
+}
+
+bool ModulosGSM::comando(String comandoAT, String respEsperada){
+  static unsigned int tentativas = 5;
+  bool comandOk = false, retorno = false;
+  unsigned int i=1;
+
+  #ifdef DEBUG
+    Serial.print("[DEBUG] comandoAT: ");
+    Serial.println(comandoAT);
+  #endif
+
+  for(i=1; i<=tentativas; i++){
+    if (comandOk == false){
+      moduloGSM->print(comandoAT);
+      if(moduloGSM->available()>0){
+
+        if(respEsperada == "Qualquer"){
+          comandOk = true;
+          return retorno = true;
+        } else {
+          if(respostaGSM() == respEsperada){
+            comandOk = true;
+            return retorno = true;
+          } else {
+            comandOk = false;
+          }
+        }
+  
+      }
+    } else {
+      return retorno = true;
+    }
+    delay(100);
+  }
+
+  return retorno;
+}
+
+bool ModulosGSM::setGPRS(){
+  bool estadoGPRS = false;
+
+  /*
+    Adicionar condição de execução:
+    Se o GPRS já estiver ativo não executar o resto da função setGPRS()
+  */
+
+  estadoGPRS = comando("AT+SAPBR=3,1,\"Contype\",\"GPRS\"\n", "AT+SAPBR=3,1,\"Contype\",\"GPRS\"\r\nOK\r\n");
+  delay(50);
+  if(estadoGPRS == false){
+    #ifdef DEBUG
+      Serial.println("[DEBUG] ERROR comando AT+SAPBR Contype");
+    #endif
+    return;
+  }
+  estadoGPRS = comando("AT+SAPBR=3,1,\"APN\",\"www\"\n", "AT+SAPBR=3,1,\"APN\",\"www\"\r\nOK\r\n");
+  delay(50);
+  if(estadoGPRS == false){
+    #ifdef DEBUG
+      Serial.println("[DEBUG] ERROR comando AT+SAPBR APN");
+    #endif
+    return;
+  }
+  estadoGPRS = comando("AT+SAPBR=1,1\n", "Qualquer");
+  delay(50);
+
+  estadoGPRS = comando("AT+SAPBR=2,1\n", "AT+SAPBR=2,1\r\nERROR\r\n");
+  delay(50);
+  if(estadoGPRS == true){
+    #ifdef DEBUG
+      Serial.println("[DEBUG] ERROR comando AT+SAPBR=2,1");
+    #endif
+    return;
+  } else {
+    estadoGPRS = true;
+  }
+
+  #ifdef DEBUG
+    Serial.print("estadoGPRS: ");
+    Serial.println(estadoGPRS);
+  #endif
+
+  return estadoGPRS;         //Comando só será executado se o estadoGPRS for true
+}
+
+bool ModulosGSM::httpWriteGET(String urlDados, bool https){
+  bool estadoEnvio = false;
+
+  estadoEnvio = setGPRS();
+  delay(50);
+  if(estadoEnvio == false){
+    #ifdef DEBUG
+      Serial.println("[DEBUG] ERROR GPRS Inativo");
+    #endif
+    return;
+  }
+  estadoEnvio = comando("AT+HTTPINIT\n", "Qualquer");
+  delay(50);
+
+  if(https == 1){
+    estadoEnvio = comando("AT+HTTPSSL=1\n", "AT+HTTPSSL=1\r\nOK\r\n");
+    delay(50);
+    if(estadoEnvio == false){
+      #ifdef DEBUG
+        Serial.println("[DEBUG] ERROR comando AT+HTTPSSL");
+      #endif
+      return;
+    }
+  }
+  estadoEnvio = comando("AT+HTTPPARA=\"CID\",1\n", "AT+HTTPPARA=\"CID\",1\r\nOK\r\n");
+  delay(50);
+  if(estadoEnvio == false){
+    #ifdef DEBUG
+      Serial.println("[DEBUG] ERROR comando AT+HTTPPARA CID");
+    #endif
+    return;
+  }
+  estadoEnvio = comando("AT+HTTPPARA=\"URL\",\"" + urlDados + "\"\n", "Qualquer");
+  delay(50);
+  if(estadoEnvio == false){
+    #ifdef DEBUG
+      Serial.println("[DEBUG] ERROR comando AT+HTTPPARA URL");
+    #endif
+    return;
+  }
+  estadoEnvio = comando("AT+HTTPACTION=0\n", "Qualquer");
+  delay(50);
+
+  #ifdef DEBUG
+    Serial.print("estadoEnvio: ");
+    Serial.println(estadoEnvio);
+  #endif
+
+  return estadoEnvio;         //Comando só será executado se o estadoEnvio for true
+}
+
+String ModulosGSM::httpReadGET(String url, bool https){
+  bool estadoEnvio;
+  String retorno = "", pagina = "";
+
+  estadoEnvio = httpWriteGET(url, https);
+
+  if(estadoEnvio == true){
+    moduloGSM->print("AT+HTTPREAD\n");
+    #ifdef DEBUG
+      Serial.println("READ executado");
+    #endif
+      if(moduloGSM->available()>0){
+        pagina = respostaGSM();
+        if(pagina != "AT+HTTPREAD\r\nERROR\r\n"){
+          retorno = pagina;
+        } else {
+          retorno = "[DEBUG] Erro na leitura da Pagina";
+        }
+      }
+    delay(50);
+  } else {
+    retorno = "[DEBUG] Erro ao executar GET";
+  }
+  return retorno;
+}
+
+bool ModulosGSM::httpWritePOST(String url, bool https, String contentType, String pacote){
+  bool estadoEnvio = false;
+  static unsigned int tempoEscritaVariaveis = 5000;
+
+  estadoEnvio = setGPRS();
+  delay(50);
+  if(estadoEnvio == false){
+    #ifdef DEBUG
+      Serial.println("[DEBUG] ERROR GPRS Inativo");
+    #endif
+    return;
+  }
+  estadoEnvio = comando("AT+HTTPINIT\n", "Qualquer");
+  delay(50);
+
+  if(https == 1){
+    estadoEnvio = comando("AT+HTTPSSL=1\n", "AT+HTTPSSL=1\r\nOK\r\n");
+    delay(50);
+    if(estadoEnvio == false){
+      #ifdef DEBUG
+        Serial.println("[DEBUG] ERROR comando AT+HTTPSSL");
+      #endif
+      return;
+    }
+  }
+  estadoEnvio = comando("AT+HTTPPARA=\"CID\",1\n", "AT+HTTPPARA=\"CID\",1\r\nOK\r\n");
+  delay(50);
+  if(estadoEnvio == false){
+    #ifdef DEBUG
+      Serial.println("[DEBUG] ERROR comando AT+HTTPPARA CID");
+    #endif
+    return;
+  }
+  estadoEnvio = comando("AT+HTTPPARA=\"URL\",\"" + url + "\"\n", "Qualquer");
+  delay(50);
+  // Verificar se o próximo if é necessário:
+  if(estadoEnvio == false){
+    #ifdef DEBUG
+      Serial.println("[DEBUG] ERROR comando AT+HTTPPARA URL");
+    #endif
+    return;
+  }
+
+  estadoEnvio = comando("AT+HTTPPARA=\"CONTENT\",\"" + contentType + "\"\n", "Qualquer");
+  delay(50);
+  if(estadoEnvio == false){
+    #ifdef DEBUG
+      Serial.println("[DEBUG] ERROR comando AT+HTTPPARA CONTENT");
+    #endif
+    return;
+  }
+  // Verificar se o tamanho 192 é adequado e utilizar milis ao invés de delay
+  estadoEnvio = comando("AT+HTTPDATA=192," + String(tempoEscritaVariaveis) + "\n", "Qualquer");
+  delay(1000);
+  moduloGSM->print(pacote);
+  delay(tempoEscritaVariaveis);
+  delay(3000);
+
+  estadoEnvio = comando("AT+HTTPACTION=1\n", "Qualquer");
+  delay(50);
+
+  #ifdef DEBUG
+    Serial.print("estadoEnvio: ");
+    Serial.println(estadoEnvio);
+  #endif
+
+  return estadoEnvio;         //Comando só será executado se o estadoEnvio for true
 }
 
 bool ModulosGSM::powerGPS(bool estado){
@@ -309,133 +538,4 @@ String ModulosGSM::infoGPS(unsigned int informacao){
     case 12:
       return units2;
   }
-}
-
-bool ModulosGSM::httpWriteGET(String urlDados, bool https){
-  bool estadoEnvio = false;
-
-  estadoEnvio = comando("AT+SAPBR=3,1,\"Contype\",\"GPRS\"\n", "AT+SAPBR=3,1,\"Contype\",\"GPRS\"\r\nOK\r\n");
-  delay(50);
-  if(estadoEnvio == false){
-    #ifdef DEBUG
-      Serial.println("[DEBUG] ERROR comando AT 1");
-    #endif
-    return;
-  }
-  estadoEnvio = comando("AT+SAPBR=3,1,\"APN\",\"www\"\n", "AT+SAPBR=3,1,\"APN\",\"www\"\r\nOK\r\n");
-  delay(50);
-  if(estadoEnvio == false){
-    #ifdef DEBUG
-      Serial.println("[DEBUG] ERROR comando AT 2");
-    #endif
-    return;
-  }
-  estadoEnvio = comando("AT+SAPBR=1,1\n", "Qualquer");
-  delay(50);
-
-  estadoEnvio = comando("AT+SAPBR=2,1\n", "AT+SAPBR=2,1\r\nERROR\r\n");
-  delay(50);
-  if(estadoEnvio == true){
-    #ifdef DEBUG
-      Serial.println("[DEBUG] ERROR comando AT 4");
-    #endif
-    return;
-  }
-  estadoEnvio = comando("AT+HTTPINIT\n", "Qualquer");
-  delay(50);
-
-  if(https == 1){
-    estadoEnvio = comando("AT+HTTPSSL=1\n", "AT+HTTPSSL=1\r\nOK\r\n");
-    delay(50);
-    if(estadoEnvio == false){
-      #ifdef DEBUG
-        Serial.println("[DEBUG] ERROR comando AT 6");
-      #endif
-      return;
-    }
-  }
-  estadoEnvio = comando("AT+HTTPPARA=\"CID\",1\n", "AT+HTTPPARA=\"CID\",1\r\nOK\r\n");
-  delay(50);
-  if(estadoEnvio == false){
-    #ifdef DEBUG
-      Serial.println("[DEBUG] ERROR comando AT 7");
-    #endif
-    return;
-  }
-  estadoEnvio = comando("AT+HTTPPARA=\"URL\",\"" + urlDados + "\"\n", "Qualquer");
-  delay(50);
-  if(estadoEnvio == false){
-    #ifdef DEBUG
-      Serial.println("[DEBUG] ERROR comando AT 8");
-    #endif
-    return;
-  }
-  estadoEnvio = comando("AT+HTTPACTION=0\n", "Qualquer");
-  delay(50);
-
-  return estadoEnvio;         //Comando só será executado se o estadoEnvio for true
-
-}
-
-bool ModulosGSM::comando(String comandoAT, String respEsperada){
-  static unsigned int tentativas = 5;
-  bool comandOk = false, retorno = false;
-  unsigned int i=1;
-
-  #ifdef DEBUG
-    Serial.print("[DEBUG] comandoAT: ");
-    Serial.println(comandoAT);
-  #endif
-
-  for(i=1; i<=tentativas; i++){
-    if (comandOk == false){
-      moduloGSM->print(comandoAT);
-      if(moduloGSM->available()>0){
-
-        if(respEsperada == "Qualquer"){
-          comandOk = true;
-          return retorno = true;
-        } else {
-          if(respostaGSM() == respEsperada){
-            comandOk = true;
-            return retorno = true;
-          } else {
-            comandOk = false;
-          }
-        }
-  
-      }
-    } else {
-      return retorno = true;
-    }
-    delay(100);
-  }
-
-  return retorno;
-}
-
-String ModulosGSM::httpReadGET(String url, bool https){
-  bool estadoEnvio;
-  String retorno = "", pagina = "";
-
-  estadoEnvio = httpWriteGET(url, https);
-
-  if(estadoEnvio == true){
-    moduloGSM->print("AT+HTTPREAD\n");
-#ifdef DEBUG
-    Serial.println("READ executado");
-#endif
-      if(moduloGSM->available()>0){
-        pagina = respostaGSM();
-        if(pagina != "AT+HTTPREAD\r\nERROR\r\n"){
-          retorno = pagina;
-        } else {
-          retorno = "[DEBUG] Erro na leitura da Pagina";
-        }
-      }
-    delay(50);
-  } else {
-    retorno = "[DEBUG] Erro ao executar GET";
-  }
-  return retorno;
 }
