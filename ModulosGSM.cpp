@@ -71,6 +71,7 @@ String ModulosGSM::ligarGSM(String telefone){        // Faz ligação para outro
 
 bool ModulosGSM::enviarSMS(String telefone, String mensagem){               // Envia uma mensagem de texto SMS para outro aparelho
   bool conexaoSMS = false;
+  String respEsperada = "", resp = "";
 
   conexaoSMS = comando("AT+CMGS=?\n", "AT+CMGS=?\r\nOK\r\n");     // Envia o comando de Teste
   delay(50);
@@ -84,22 +85,38 @@ bool ModulosGSM::enviarSMS(String telefone, String mensagem){               // E
     return;
   }
 
+  String tamanhoMsg = String(mensagem.length());
+  respEsperada = "+CMGS= " + tamanhoMsg + "\r\n\r\nOK\r\n";
+  moduloGSM->flush();
+  Serial.flush();
+ 
   moduloGSM->print("AT+CMGS=\"" + telefone + "\"\n");           // Inicia Modo Texto para envio de mensagem
   moduloGSM->print(mensagem + "\n");                            // Escreve a Mensagem
   moduloGSM->print((char)26);                                   // Envia o caracter referente a "Ctrl+Z" que fecha o Modo Texto no caso deste estar aberto
-
+  
   /*
+  String tamanhoMsg = String(mensagem.length());
+  respEsperada = "+CMGS= " + tamanhoMsg + "\r\n\r\nOK\r\n";
+  */
+  
   if(moduloGSM->available()>0){
-    String resp = respostaGSM();
-    if (resp CONTEM "OK"){    // Criar função para comparar o conteúdo de uma frase com uma palavra específica
+    resp = respostaGSM();
+    delay(50);
+    if(resp == respEsperada){
       conexaoSMS = true;
     } else {
-      conexaoSMS = false;  
+      conexaoSMS = false;
     }
   }
-  */
 
-  return conexaoSMS;        // Ainda não muito confiável
+  #ifdef DEBUG
+    Serial.println("[SMS] respEsperada: ");
+    Serial.println(respEsperada);
+    Serial.println("[SMS] respostaGSM: ");
+    Serial.println(resp);
+  #endif
+
+  return conexaoSMS;
 }
 
 bool ModulosGSM::comando(String comandoAT, String respEsperada){
