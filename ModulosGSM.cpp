@@ -213,7 +213,7 @@ bool ModulosGSM::httpWriteGET(String urlDados, bool https){
     #ifdef DEBUG
       Serial.println("[DEBUG] ERROR GPRS Inativo");
     #endif
-    return;
+    return estadoEnvio;
   }
   estadoEnvio = comando("AT+HTTPINIT\n", "Qualquer");
   delay(50);
@@ -225,7 +225,7 @@ bool ModulosGSM::httpWriteGET(String urlDados, bool https){
       #ifdef DEBUG
         Serial.println("[DEBUG] ERROR comando AT+HTTPSSL");
       #endif
-      return;
+      return estadoEnvio;
     }
   }
   estadoEnvio = comando("AT+HTTPPARA=\"CID\",1\n", "AT+HTTPPARA=\"CID\",1\r\nOK\r\n");
@@ -234,7 +234,7 @@ bool ModulosGSM::httpWriteGET(String urlDados, bool https){
     #ifdef DEBUG
       Serial.println("[DEBUG] ERROR comando AT+HTTPPARA CID");
     #endif
-    return;
+    return estadoEnvio;
   }
   estadoEnvio = comando("AT+HTTPPARA=\"URL\",\"" + urlDados + "\"\n", "Qualquer");
   delay(50);
@@ -242,7 +242,7 @@ bool ModulosGSM::httpWriteGET(String urlDados, bool https){
     #ifdef DEBUG
       Serial.println("[DEBUG] ERROR comando AT+HTTPPARA URL");
     #endif
-    return;
+    return estadoEnvio;
   }
   estadoEnvio = comando("AT+HTTPACTION=0\n", "Qualquer");
   delay(50);
