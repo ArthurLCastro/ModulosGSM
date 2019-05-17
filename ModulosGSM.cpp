@@ -57,13 +57,17 @@ String ModulosGSM::infoGSM(){                        // Retorna Informações do
 
 String ModulosGSM::ligarGSM(String telefone){        // Faz ligação para outro aparelho
   String retorno = "";
-
+/*
+  if(testeConexaoGSM() == false){
+    return "[DEBUG_ligarGSM()] Falha na conexão do Módulo GSM";
+  }
+*/
   moduloGSM->print("ATH\n");                         // Envia o comando AT para desligar uma ligação em andamento
   moduloGSM->print((char)26);                        // Envia o caracter referente a "Ctrl+Z" que fecha o Modo Texto no caso deste estar aberto
   moduloGSM->print("ATD" + telefone + ";\n");        // Executa o comando AT para efetuar ligação
   
   if(moduloGSM->available()>0){
-    retorno = respostaGSM(); 
+    retorno = respostaGSM();
   }
 
   return retorno;

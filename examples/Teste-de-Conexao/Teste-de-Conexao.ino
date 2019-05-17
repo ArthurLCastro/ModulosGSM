@@ -43,13 +43,13 @@ void setup(){
 
 void loop(){
   teste = meuGSM1.testeConexaoGSM();    // Retorna um valor booleano, 1 para conexao ok ou 0 para módulo desconectado
-  //Serial.println(teste);
-  
-  if(teste == 1){
+  Serial.println(teste);
+
+  if(meuGSM1.testeConexaoGSM() == 1){
     Serial.println("Conexao Estabelecida");
-  } else if(teste == 0){
+  } else {
     Serial.println("Modulo Desconectado");  
   }
-  
+
   delay(500);
 }
