@@ -1,7 +1,7 @@
 #include <ModulosGSM.h>
 
 // Descomentando a linha abaixo será possível vizualizar o DEBUG pela Serial
-#define DEBUG
+//#define DEBUG
 //#define DEBUG_GPS
 
 ModulosGSM::ModulosGSM(){
@@ -72,33 +72,31 @@ String ModulosGSM::ligarGSM(String telefone){        // Faz ligação para outro
 bool ModulosGSM::enviarSMS(String telefone, String mensagem){               // Envia uma mensagem de texto SMS para outro aparelho
   bool conexaoSMS = false;
   String respEsperada = "", resp = "";
+  String tamanhoMsg = "";
 
   conexaoSMS = comando("AT+CMGS=?\n", "AT+CMGS=?\r\nOK\r\n");     // Envia o comando de Teste
   delay(50);
   if(conexaoSMS == false){
-    return;
+    return false;
   }
 
   conexaoSMS = comando("AT+CMGF=1\n", "AT+CMGF=1\r\nOK\r\n");     // Envia o comando de Teste
   delay(50);
   if(conexaoSMS == false){
-    return;
+    return false;
   }
 
-  String tamanhoMsg = String(mensagem.length());
-  respEsperada = "+CMGS= " + tamanhoMsg + "\r\n\r\nOK\r\n";
-  moduloGSM->flush();
-  Serial.flush();
- 
+  delay(1000);
+
+  tamanhoMsg = String(mensagem.length());
+  respEsperada = "+CMGS: " + tamanhoMsg + "\r\n\r\nOK\r\n";
+
   moduloGSM->print("AT+CMGS=\"" + telefone + "\"\n");           // Inicia Modo Texto para envio de mensagem
   moduloGSM->print(mensagem + "\n");                            // Escreve a Mensagem
   moduloGSM->print((char)26);                                   // Envia o caracter referente a "Ctrl+Z" que fecha o Modo Texto no caso deste estar aberto
-  
-  /*
-  String tamanhoMsg = String(mensagem.length());
-  respEsperada = "+CMGS= " + tamanhoMsg + "\r\n\r\nOK\r\n";
-  */
-  
+
+  delay(10000);
+
   if(moduloGSM->available()>0){
     resp = respostaGSM();
     delay(50);
