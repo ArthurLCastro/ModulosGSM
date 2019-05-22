@@ -291,7 +291,7 @@ bool ModulosGSM::httpWritePOST(String url, bool https, String contentType, Strin
     #ifdef DEBUG
       Serial.println("[DEBUG] ERROR GPRS Inativo");
     #endif
-    return;
+    return false;
   }
   estadoEnvio = comando("AT+HTTPINIT\n", "Qualquer");
   delay(50);
@@ -303,7 +303,7 @@ bool ModulosGSM::httpWritePOST(String url, bool https, String contentType, Strin
       #ifdef DEBUG
         Serial.println("[DEBUG] ERROR comando AT+HTTPSSL");
       #endif
-      return;
+      return false;
     }
   }
   estadoEnvio = comando("AT+HTTPPARA=\"CID\",1\n", "AT+HTTPPARA=\"CID\",1\r\nOK\r\n");
@@ -312,7 +312,7 @@ bool ModulosGSM::httpWritePOST(String url, bool https, String contentType, Strin
     #ifdef DEBUG
       Serial.println("[DEBUG] ERROR comando AT+HTTPPARA CID");
     #endif
-    return;
+    return false;
   }
   estadoEnvio = comando("AT+HTTPPARA=\"URL\",\"" + url + "\"\n", "Qualquer");
   delay(50);
@@ -321,7 +321,7 @@ bool ModulosGSM::httpWritePOST(String url, bool https, String contentType, Strin
     #ifdef DEBUG
       Serial.println("[DEBUG] ERROR comando AT+HTTPPARA URL");
     #endif
-    return;
+    return false;
   }
 
   estadoEnvio = comando("AT+HTTPPARA=\"CONTENT\",\"" + contentType + "\"\n", "Qualquer");
@@ -330,7 +330,7 @@ bool ModulosGSM::httpWritePOST(String url, bool https, String contentType, Strin
     #ifdef DEBUG
       Serial.println("[DEBUG] ERROR comando AT+HTTPPARA CONTENT");
     #endif
-    return;
+    return false;
   }
   // Verificar se o tamanho 192 é adequado e utilizar milis ao invés de delay
   estadoEnvio = comando("AT+HTTPDATA=192," + String(tempoEscritaVariaveis) + "\n", "Qualquer");
