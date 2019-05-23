@@ -1,25 +1,6 @@
-// Exemplo 003 - Enviar Dados para um Servidor Web via GET
+// Enviar Dados para um Servidor Web via GET
 // Arthur L. Castro
 // Maio de 2019
-
-/*
-   Este código tem como objetivo...
-   
-   Mais de um Módulo pode ser conectado ao microcontrolador pois a comunicação
-   Serial pode ser feita a partir de pinos digitais utilizando a biblioteca
-   "SoftwareSerial", padrão do Arduino.
-   
-   Observação (Módulo SIM808 EVB-V3.2):
-   Este módulo possui um pushbutton para habilitar o GSM. Para que haja um
-   funcionamento adequado deve-se pressioná-lo e verificar os LEDs de indicação
-   na placa após a alimentação do sistema. Também é possível refazer os pontos de
-   solda curto-circuitando o pushbutton.
-
-   Lembrete:
-   No caso de você querer utilizar a comunicação Serial física do Arduino,
-   não será possível ver as respostas recebidas do Módulo no MonitorSerial.
-*/
-
 
 // INCLUSÃO DE BIBLIOTECAS:
 #include <ModulosGSM.h>
