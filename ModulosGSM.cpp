@@ -123,7 +123,7 @@ bool ModulosGSM::enviarSMS(String telefone, String mensagem){               // E
 }
 
 bool ModulosGSM::comando(String comandoAT, String respEsperada){
-  static unsigned int tentativas = 5;
+  static unsigned int tentativas = 10;
   bool comandOk = false, retorno = false;
   unsigned int i=1;
   String respRecebida = "";
@@ -144,6 +144,10 @@ bool ModulosGSM::comando(String comandoAT, String respEsperada){
           respRecebida = respostaGSM();
           if(respRecebida == respEsperada){
             comandOk = true;
+            #ifdef RespComand
+                Serial.print("[ComandoAT] Tentativas ate OK: ");
+                Serial.println(i);              
+            #endif
             return retorno = true;
           } else {
             comandOk = false;
