@@ -3,6 +3,7 @@
 // Descomentando a linha abaixo será possível vizualizar o DEBUG pela Serial
 //#define DEBUG
 //#define DEBUG_GPS
+#define RespComand
 
 ModulosGSM::ModulosGSM(){
 }
@@ -125,6 +126,7 @@ bool ModulosGSM::comando(String comandoAT, String respEsperada){
   static unsigned int tentativas = 5;
   bool comandOk = false, retorno = false;
   unsigned int i=1;
+  String respRecebida = "";
 
   #ifdef DEBUG
     Serial.print("[DEBUG] comandoAT: ");
@@ -135,19 +137,26 @@ bool ModulosGSM::comando(String comandoAT, String respEsperada){
     if (comandOk == false){
       moduloGSM->print(comandoAT);
       if(moduloGSM->available()>0){
-
         if(respEsperada == "Qualquer"){
           comandOk = true;
           return retorno = true;
         } else {
-          if(respostaGSM() == respEsperada){
+          respRecebida = respostaGSM();
+          if(respRecebida == respEsperada){
             comandOk = true;
             return retorno = true;
           } else {
             comandOk = false;
+            #ifdef RespComand
+              if(i == 5){
+                Serial.println("[ERROR] comandoAT: ");
+                Serial.println(comandoAT);
+                Serial.println("[ERROR] respRecebida: ");
+                Serial.println(respRecebida);
+              }
+            #endif
           }
         }
-  
       }
     } else {
       return retorno = true;
