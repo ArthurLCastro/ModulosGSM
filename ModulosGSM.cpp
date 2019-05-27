@@ -3,7 +3,7 @@
 // Descomentando a linha abaixo será possível vizualizar o DEBUG pela Serial
 //#define DEBUG
 //#define DEBUG_GPS
-#define RespComand
+//#define RespComand
 
 ModulosGSM::ModulosGSM(){
 }
@@ -152,7 +152,7 @@ bool ModulosGSM::comando(String comandoAT, String respEsperada){
           } else {
             comandOk = false;
             #ifdef RespComand
-              if(i == 5){
+              if(i == tentativas){
                 Serial.println("[ERROR] comandoAT: ");
                 Serial.println(comandoAT);
                 Serial.println("[ERROR] respRecebida: ");
@@ -319,8 +319,17 @@ bool ModulosGSM::httpWritePOST(String url, bool https, String contentType, Strin
     #endif
     return false;
   }
-  estadoEnvio = comando("AT+HTTPINIT\n", "Qualquer");
+
+  moduloGSM->print("AT+HTTPTERM\n");
   delay(50);
+  estadoEnvio = comando("AT+HTTPINIT\n", "AT+HTTPINIT\r\nOK\r\n");
+  delay(50);
+  if(estadoEnvio == false){
+    #ifdef DEBUG
+      Serial.println("[DEBUG] ERROR comando AT+HTTPINIT");
+    #endif
+    return false;
+  }
 
   if(https == 1){
     estadoEnvio = comando("AT+HTTPSSL=1\n", "AT+HTTPSSL=1\r\nOK\r\n");
