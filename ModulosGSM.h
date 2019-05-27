@@ -9,7 +9,7 @@ class ModulosGSM{
 		Stream *moduloGSM;
 		bool comando(String, String);
 		String dadosGPS();
-		String apn = "www";
+		String apn = "www";			// Define APN padrão como "www"
 		bool estadoGPRS = false;
 
 	public:

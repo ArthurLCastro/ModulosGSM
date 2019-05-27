@@ -1,9 +1,9 @@
 #include <ModulosGSM.h>
 
 // Descomentando a linha abaixo será possível vizualizar o DEBUG pela Serial
-//#define DEBUG
+#define DEBUG
 //#define DEBUG_GPS
-//#define RespComand
+#define RespComand
 
 ModulosGSM::ModulosGSM(){
 }
@@ -320,16 +320,10 @@ bool ModulosGSM::httpWritePOST(String url, bool https, String contentType, Strin
     return false;
   }
 
-  moduloGSM->print("AT+HTTPTERM\n");
+  comando("AT+HTTPTERM\n","AT+HTTPTERM\r\nOK\r\n");          // Desabilita a conexao HTTP
   delay(50);
-  estadoEnvio = comando("AT+HTTPINIT\n", "AT+HTTPINIT\r\nOK\r\n");
+  comando("AT+HTTPINIT\n","AT+HTTPINIT\r\nOK\r\n");          // Habilita a conexao HTTP
   delay(50);
-  if(estadoEnvio == false){
-    #ifdef DEBUG
-      Serial.println("[DEBUG] ERROR comando AT+HTTPINIT");
-    #endif
-    return false;
-  }
 
   if(https == 1){
     estadoEnvio = comando("AT+HTTPSSL=1\n", "AT+HTTPSSL=1\r\nOK\r\n");
