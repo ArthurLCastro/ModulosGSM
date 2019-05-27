@@ -8,8 +8,10 @@ class ModulosGSM{
 	private:
 		Stream *moduloGSM;
 		bool comando(String, String);
-		bool setGPRS();
 		String dadosGPS();
+		String apn = "www";
+		bool estadoGPRS = false;
+
 	public:
 		ModulosGSM();
 		ModulosGSM(Stream&);
@@ -21,6 +23,9 @@ class ModulosGSM{
 
 		String ligarGSM(String);
 		bool enviarSMS(String, String);
+		
+		bool setGPRS();
+		bool setGPRS(String);
 
 		bool httpWriteGET(String, bool);
 		String httpReadGET(String, bool);
@@ -31,6 +36,8 @@ class ModulosGSM{
 
 		String dataGPS();
 		String horaGPS();
+
+		void defineAPN(String);
 };
 
 #endif

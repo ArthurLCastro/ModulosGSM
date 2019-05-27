@@ -123,9 +123,9 @@ bool ModulosGSM::enviarSMS(String telefone, String mensagem){               // E
 }
 
 bool ModulosGSM::comando(String comandoAT, String respEsperada){
-  static unsigned int tentativas = 10;
+  uint8_t tentativas = 10;
   bool comandOk = false, retorno = false;
-  unsigned int i=1;
+  uint8_t i=1;
   String respRecebida = "";
 
   #ifdef DEBUG
@@ -171,9 +171,11 @@ bool ModulosGSM::comando(String comandoAT, String respEsperada){
   return retorno;
 }
 
-bool ModulosGSM::setGPRS(){
-  bool estadoGPRS = false;
+void ModulosGSM::defineAPN(String novaApn){
+  apn = novaApn;
+}
 
+bool ModulosGSM::setGPRS(){
   /*
     Adicionar condição de execução:
     Se o GPRS já estiver ativo não executar o resto da função setGPRS()
@@ -187,7 +189,7 @@ bool ModulosGSM::setGPRS(){
     #endif
     return;
   }
-  estadoGPRS = comando("AT+SAPBR=3,1,\"APN\",\"www\"\n", "AT+SAPBR=3,1,\"APN\",\"www\"\r\nOK\r\n");
+  estadoGPRS = comando("AT+SAPBR=3,1,\"APN\",\"" + apn + "\"\n", "AT+SAPBR=3,1,\"APN\",\"" + apn + "\"\r\nOK\r\n");
   delay(50);
   if(estadoGPRS == false){
     #ifdef DEBUG
@@ -217,10 +219,15 @@ bool ModulosGSM::setGPRS(){
   return estadoGPRS;         //Comando só será executado se o estadoGPRS for true
 }
 
+bool ModulosGSM::setGPRS(String novaApn){
+  defineAPN(novaApn);
+  setGPRS();
+}
+
 bool ModulosGSM::httpWriteGET(String urlDados, bool https){
   bool estadoEnvio = false;
 
-  estadoEnvio = setGPRS();
+  estadoEnvio = estadoGPRS;
   delay(50);
   if(estadoEnvio == false){
     #ifdef DEBUG
@@ -298,7 +305,13 @@ bool ModulosGSM::httpWritePOST(String url, bool https, String contentType, Strin
   bool estadoEnvio = false;
   static unsigned int tempoEscritaVariaveis = 5000;
 
-  estadoEnvio = setGPRS();
+  if(!estadoGPRS){
+    for(uint8_t i; ((i<=5) || (!estadoGPRS)); i++){
+      setGPRS();
+    }
+  }
+
+  estadoEnvio = estadoGPRS;
   delay(50);
   if(estadoEnvio == false){
     #ifdef DEBUG

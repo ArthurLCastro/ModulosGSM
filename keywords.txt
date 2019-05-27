@@ -19,4 +19,7 @@
 
 	dataGPS				KEYWORD2
 	horaGPS				KEYWORD2
+
+	setGPRS				KEYWORD2
+	defineAPN			KEYWORD2
 };
