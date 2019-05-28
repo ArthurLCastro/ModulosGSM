@@ -1,8 +1,9 @@
-#include <Arduino.h>
-#include <SoftwareSerial.h>
-
 #ifndef ModulosGSM_h
 #define ModulosGSM_h
+
+#include <Arduino.h>
+//#include <SoftwareSerial.h>
+#include <Config.h>
 
 class ModulosGSM{
 	private:

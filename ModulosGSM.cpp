@@ -1,10 +1,5 @@
 #include <ModulosGSM.h>
 
-// Descomentando a linha abaixo será possível vizualizar o DEBUG pela Serial
-#define DEBUG
-//#define DEBUG_GPS
-#define RespComand
-
 ModulosGSM::ModulosGSM(){
 }
 
