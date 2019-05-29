@@ -2,23 +2,24 @@
 #define Gps_h
 
 #include <Arduino.h>
-#include <Config.h>
+#include <GpsConnector.h>
 
-class Gps{
-//	private:
+class Gps:public GpsConnector, public ModulosGSM
+{
+private:
+    String respGPS = "";
+	String latitude = "";
+	String longitude = "";
+	String altitude = "";
 
-	public:
-		Gps();
-
-		void beginGPS();
-		void updateGPS();
-		String getLatitudeGPS();
-		String getLongitudeGPS();
-		String getAltitudeGPS();
-
-		String latitude = "";
-		String longitude = "";
-		String altitude = "";
+public:
+	Gps();
+	bool begin();
+	void update();
+	String getLatitude();
+	String getLongitude();
+	String getAltitude();
+	bool powerGPS(bool);
 };
 
 #endif

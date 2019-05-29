@@ -2,12 +2,10 @@
 #define ModulosGSM_h
 
 #include <Arduino.h>
-//#include <SoftwareSerial.h>
 #include <Config.h>
 
 class ModulosGSM{
 	private:
-		Stream *moduloGSM;
 		bool comando(String, String);
 		String dadosGPS();
 		String apn = "www";			// Define APN padrão como "www"
@@ -39,6 +37,11 @@ class ModulosGSM{
 		String horaGPS();
 
 		void defineAPN(String);
+	
+	protected:
+		Stream *moduloGSM;
+
+
 };
 
 #endif
