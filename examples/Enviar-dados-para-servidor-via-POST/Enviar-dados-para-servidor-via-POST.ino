@@ -9,6 +9,7 @@
 #define RX_GSM1 8         // ligar o Pino 8 do Arduino no TX do Módulo "SIM808 EVB-V3.2"
 #define TX_GSM1 7         // ligar o Pino 7 do Arduino no RX do Módulo "SIM808 EVB-V3.2"
 #define intervalo 10000   // Intervalo entre os envios de dados ao servidor
+#define APN "timbrasil.br"
 
 // CRIAÇÃO DE OBJETOS - Para emular as comunicações Seriais nos pinos digitais definidos acima:
 ModulosGSM meuGSM1;
@@ -25,6 +26,7 @@ void setup(){
   Serial.begin(9600);                       // Inicia a comunicação Serial a uma taxa de transmissão de 9600
   serialGSM1.begin(9600);                   // Inicia a comunicação Serial Emulada a uma taxa de transmissão de 9600
   meuGSM1.setupGSM(serialGSM1);
+  meuGSM1.setGPRS(APN);
 }
 
 void loop(){

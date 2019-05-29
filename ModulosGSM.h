@@ -2,7 +2,7 @@
 #define ModulosGSM_h
 
 #include <Arduino.h>
-//#include <SoftwareSerial.h>
+#include <SoftwareSerial.h>
 #include <Config.h>
 
 class ModulosGSM{
