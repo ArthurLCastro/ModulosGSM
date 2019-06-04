@@ -9,7 +9,11 @@
 #define RX_GSM1 8         // ligar o Pino 8 do Arduino no TX do Módulo "SIM808 EVB-V3.2"
 #define TX_GSM1 7         // ligar o Pino 7 do Arduino no RX do Módulo "SIM808 EVB-V3.2"
 #define intervalo 10000   // Intervalo entre os envios de dados ao servidor
-#define APN "timbrasil.br"
+
+//#define APN "timbrasil.br"
+//#define APN "gprs.oi.com.br"
+//#define APN "claro.com.br"
+//#define APN "zap.vivo.com.br"
 
 // CRIAÇÃO DE OBJETOS - Para emular as comunicações Seriais nos pinos digitais definidos acima:
 ModulosGSM meuGSM1;
@@ -17,10 +21,10 @@ SoftwareSerial serialGSM1(RX_GSM1, TX_GSM1);
 
 // DECLARAÇÕES DE VARIÁVEIS GLOBAIS:
   String url = "", pacote = "";
-  static String contentType = "application/x-www-form-urlencoded";
-  bool conSegura = 1;       // '1' para conexões HTTPS ou '0' para conexões HTTP
-  bool estadoEnvio;
   String sensor1, sensor2, sensor3;
+  bool estadoEnvio;
+  bool conSegura = 0;       // '1' para conexões HTTPS ou '0' para conexões HTTP
+  static String contentType = "application/x-www-form-urlencoded";
 
 void setup(){
   Serial.begin(9600);                       // Inicia a comunicação Serial a uma taxa de transmissão de 9600
@@ -34,8 +38,10 @@ void loop(){
   sensor2 = "umid=" + String(lerUmidade());
   sensor3 = "lum=" + String(lerLuminosidade());
 
-// Se a página for http (conSegura = 0), deve-se pôr a parte "http://" na URL a ser enviada
-  url = "https://castroarthurelectronics.000webhostapp.com/post/add.php";
+// Se a página for https (conSegura = 1), deve-se pôr a parte "https://" na URL a ser enviada
+//  url = "https://castroarthurelectronics.000webhostapp.com/libGSM/get/add.php";
+  url = "www.arthurcastro.tk/libGSM/post/add.php";
+
   pacote = sensor1 + "&" + sensor2 + "&" + sensor3;
 
   estadoEnvio = meuGSM1.httpWritePOST(url, conSegura, contentType, pacote);
