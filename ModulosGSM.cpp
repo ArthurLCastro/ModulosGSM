@@ -299,13 +299,13 @@ String ModulosGSM::httpReadGET(String url, bool https){
 bool ModulosGSM::httpWritePOST(String url, bool https, String contentType, String pacote){
   bool estadoEnvio = false;
   static unsigned int tempoEscritaVariaveis = 5000;
-
+/*
   if(!estadoGPRS){
     for(uint8_t i; ((i<=5) || (!estadoGPRS)); i++){
       setGPRS();
     }
   }
-
+*/
   estadoEnvio = estadoGPRS;
   delay(50);
   if(estadoEnvio == false){
